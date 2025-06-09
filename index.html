@@ -1,122 +1,134 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <title>🌾 Farmsucht Clicker</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🌾 Farmsucht Minecraft Server 🌾</title>
   <style>
     body {
-      background: linear-gradient(135deg, #a8e6cf, #dcedc1);
-      font-family: 'Minecraftia', sans-serif;
-      color: #2d2d2d;
+      margin: 0;
+      font-family: 'Minecraftia', monospace;
+      background: linear-gradient(to bottom right, #a8e063, #56ab2f);
+      color: #fff;
       text-align: center;
-      padding: 20px;
+      overflow-x: hidden;
     }
     h1 {
-      font-size: 2.5rem;
-      margin-bottom: 0.5rem;
-      color: #3e8e41;
+      font-size: 2em;
+      margin-top: 20px;
+      text-shadow: 2px 2px #000;
     }
-    .button {
-      background: #55aa55;
-      border: 2px solid #3e8e41;
-      color: white;
-      font-size: 1.5rem;
-      padding: 10px 20px;
+    .info {
+      font-size: 1.2em;
       margin: 10px;
-      border-radius: 12px;
+      text-shadow: 1px 1px #000;
+    }
+    .cookie {
+      font-size: 5em;
       cursor: pointer;
+      transition: transform 0.1s;
     }
-    .button:hover {
-      background: #449944;
+    .cookie:active {
+      transform: scale(0.95);
     }
-    #cookie {
-      width: 150px;
-      height: 150px;
-      cursor: pointer;
-    }
-    .scoreboard {
-      font-size: 1.2rem;
-      margin: 20px;
+    .score {
+      font-size: 1.5em;
+      margin: 10px;
+      text-shadow: 1px 1px #000;
     }
     .footer {
-      margin-top: 40px;
-      font-size: 0.9rem;
-      color: #444;
+      margin-top: 30px;
+      font-size: 0.9em;
+      color: #ccc;
     }
-    .footer a {
-      color: #3e8e41;
+    .buttons a {
+      display: inline-block;
+      margin: 5px 10px;
+      padding: 10px 20px;
+      background-color: #2e7d32;
+      color: white;
+      border-radius: 10px;
       text-decoration: none;
-      margin: 0 10px;
+      font-weight: bold;
+      box-shadow: 2px 2px 5px rgba(0,0,0,0.4);
     }
-    .rankings {
-      margin-top: 20px;
-      text-align: center;
+    .buttons a:hover {
+      background-color: #1b5e20;
     }
-    .rankings h3 {
-      color: #3e8e41;
+    .leaderboard {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 10px;
+      border-radius: 10px;
+      font-size: 0.9em;
+      max-width: 200px;
+    }
+    .counter {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
     }
   </style>
 </head>
 <body>
   <h1>🌾 Farmsucht Minecraft Server 🌾</h1>
-  <p>IP: <b>farmsucht.eu</b> | Version: <b>1.21.4</b> | Modus: <b>Citybuild</b></p>
+  <div class="info">IP: <strong>farmsucht.eu</strong> | Version: 1.21.4 | Modus: Citybuild</div>
 
-  <div class="scoreboard">
-    <p><b>Punkte:</b> <span id="score">0</span></p>
-  </div>
+  <div class="cookie" onclick="clickCookie()">🍪</div>
+  <div class="score">Punkte: <span id="score">0</span></div>
 
-  <img src="https://static.wikia.nocookie.net/minecraft_gamepedia/images/4/48/Cookie_JE3_BE3.png" id="cookie" onclick="addPoint()">
-
-  <div class="rankings">
-    <h3>Rangliste (Lokal)</h3>
-    <ol id="rankList"></ol>
-  </div>
-
-  <button class="button" onclick="resetGame()">Neustarten</button>
-
-  <div class="footer">
+  <div class="buttons">
     <a href="https://dsc.gg/farmsucht" target="_blank">🔗 Discord</a>
     <a href="https://youtube.com/@zaa_ay" target="_blank">▶️ YouTube</a>
-    <p>2025 © Farmsucht | Programmiert von <b>zaa_ay</b> 🌟</p>
-    <div style="position: fixed; bottom: 10px; right: 10px; font-size: 0.8rem;">
-      <script type='text/javascript' src='https://www.freevisitorcounters.com/auth.php?id=ed0269d4f07f8324e1f49abeed46ba120c3c7da7'></script>
-      <script type="text/javascript" src="https://www.freevisitorcounters.com/en/home/counter/1349906/t/1"></script>
-    </div>
+  </div>
+
+  <div class="leaderboard">
+    <strong>🏆 Rangliste</strong>
+    <ul id="leaderboard" style="list-style: none; padding-left: 0;"></ul>
+  </div>
+
+  <div class="footer">© 2025 Farmsucht – Programmiert von <strong>zaa_ay</strong></div>
+
+  <div class="counter">
+    <a href='https://www.free-counters.org/'>https://www.Free-Counters.org</a>
+    <script type='text/javascript' src='https://www.freevisitorcounters.com/auth.php?id=ed0269d4f07f8324e1f49abeed46ba120c3c7da7'></script>
+    <script type="text/javascript" src="https://www.freevisitorcounters.com/en/home/counter/1349906/t/1"></script>
   </div>
 
   <script>
-    let score = 0;
-    let rankings = JSON.parse(localStorage.getItem('rankings')) || [];
+    let score = parseInt(localStorage.getItem("score")) || 0;
+    document.getElementById("score").innerText = score;
 
-    function addPoint() {
+    function clickCookie() {
       score++;
+      localStorage.setItem("score", score);
       document.getElementById("score").innerText = score;
+      updateLeaderboard();
     }
 
-    function resetGame() {
-      const name = prompt("Dein Name für die Rangliste:");
-      if (name) {
-        rankings.push({ name: name, score: score });
-        rankings.sort((a, b) => b.score - a.score);
-        rankings = rankings.slice(0, 5); // Top 5
-        localStorage.setItem('rankings', JSON.stringify(rankings));
-        updateRanking();
+    function updateLeaderboard() {
+      let leaderboard = JSON.parse(localStorage.getItem("leaderboard")) || [];
+      const username = "Spieler";
+
+      const existing = leaderboard.find(l => l.name === username);
+      if (existing) {
+        existing.score = Math.max(existing.score, score);
+      } else {
+        leaderboard.push({ name: username, score });
       }
-      score = 0;
-      document.getElementById("score").innerText = score;
+
+      leaderboard.sort((a, b) => b.score - a.score);
+      leaderboard = leaderboard.slice(0, 5);
+
+      localStorage.setItem("leaderboard", JSON.stringify(leaderboard));
+
+      const list = document.getElementById("leaderboard");
+      list.innerHTML = leaderboard.map(entry => `<li>${entry.name}: ${entry.score}</li>`).join("");
     }
 
-    function updateRanking() {
-      const rankList = document.getElementById("rankList");
-      rankList.innerHTML = '';
-      rankings.forEach((entry, index) => {
-        const li = document.createElement("li");
-        li.textContent = `#${index + 1} ${entry.name} - ${entry.score} Punkte`;
-        rankList.appendChild(li);
-      });
-    }
-
-    updateRanking();
+    updateLeaderboard();
   </script>
 </body>
 </html>

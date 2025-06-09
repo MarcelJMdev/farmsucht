@@ -331,7 +331,7 @@
     width: 40,
     height: 50,
     dy: 0,
-    jumpPower: 5, // Etwas höher als vorher
+    jumpPower: 11, // Etwas höher als vorher
     grounded: false,
     color: '#8B4513'
   };
@@ -420,7 +420,7 @@
       // Player is on ground
     } else {
       // Apply gravity
-      player.dy += 0.3; // Etwas weniger Schwerkraft für längeren Sprung
+      player.dy += 0.2; // Etwas weniger Schwerkraft für längeren Sprung
       player.y += player.dy;
       
       // Check ground collision

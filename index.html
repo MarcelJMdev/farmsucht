@@ -17,7 +17,6 @@
     --text-light: #e8ffe8;
     --text-medium: #b8ffb8;
     --accent-gold: #ffcc00;
-    --shadow-glow: 0 0 20px rgba(0, 255, 136, 0.3);
   }
 
   * {
@@ -33,56 +32,18 @@
     font-family: 'Roboto', sans-serif;
     min-height: 100vh;
     overflow-x: hidden;
-    position: relative;
-  }
-
-  /* Animated background particles */
-  body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: 
-      radial-gradient(circle at 20% 80%, rgba(0, 255, 136, 0.1) 0%, transparent 50%),
-      radial-gradient(circle at 80% 20%, rgba(0, 255, 136, 0.05) 0%, transparent 50%);
-    animation: float 6s ease-in-out infinite;
-    pointer-events: none;
-    z-index: -1;
-  }
-
-  @keyframes float {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-10px); }
   }
 
   #container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
-    position: relative;
-    z-index: 1;
   }
 
   /* Header */
   .header {
     text-align: center;
     margin-bottom: 3rem;
-    position: relative;
-  }
-
-  .header::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 120%;
-    height: 120%;
-    background: radial-gradient(circle, rgba(0, 255, 136, 0.05) 0%, transparent 70%);
-    border-radius: 50%;
-    z-index: -1;
   }
 
   h1 {
@@ -90,17 +51,8 @@
     font-size: clamp(2rem, 5vw, 4rem);
     font-weight: 900;
     color: var(--primary-green);
-    text-shadow: 
-      0 0 5px var(--primary-green),
-      0 0 10px var(--primary-green),
-      0 0 15px var(--primary-green);
+    text-shadow: 0 0 5px var(--primary-green);
     margin-bottom: 1rem;
-    animation: pulse 2s ease-in-out infinite alternate;
-  }
-
-  @keyframes pulse {
-    from { text-shadow: 0 0 5px var(--primary-green), 0 0 10px var(--primary-green), 0 0 15px var(--primary-green); }
-    to { text-shadow: 0 0 10px var(--primary-green), 0 0 15px var(--primary-green), 0 0 20px var(--primary-green); }
   }
 
   .server-info {
@@ -110,7 +62,6 @@
     border-radius: 15px;
     padding: 1.5rem;
     margin: 2rem 0;
-    box-shadow: var(--shadow-glow);
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 1rem;
@@ -142,61 +93,25 @@
     font-size: 1.1rem;
   }
 
-  /* Cards */
-  .card {
+  /* Game Area */
+  .game-container {
     background: var(--bg-light);
     backdrop-filter: blur(15px);
     border: 1px solid rgba(0, 255, 136, 0.3);
     border-radius: 20px;
     padding: 2rem;
-    margin: 1.5rem 0;
-    box-shadow: 
-      0 8px 32px rgba(0, 0, 0, 0.3),
-      inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
+    margin: 2rem 0;
+    text-align: center;
   }
 
-  .card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.1), transparent);
-    transition: left 0.5s ease;
+  .game-title {
+    font-family: 'Orbitron', monospace;
+    color: var(--primary-green);
+    font-size: 2rem;
+    margin-bottom: 1rem;
   }
 
-  .card:hover::before {
-    left: 100%;
-  }
-
-  .card:hover {
-    transform: translateY(-5px);
-    box-shadow: 
-      0 12px 40px rgba(0, 0, 0, 0.4),
-      0 0 30px rgba(0, 255, 136, 0.2);
-    border-color: var(--primary-green);
-  }
-
-  /* Forms */
-  .form-group {
-    margin-bottom: 1.5rem;
-  }
-
-  .form-label {
-    display: block;
-    color: var(--text-medium);
-    font-weight: 500;
-    margin-bottom: 0.5rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-size: 0.9rem;
-  }
-
-  .form-input {
+  .name-input {
     width: 100%;
     max-width: 300px;
     padding: 12px 16px;
@@ -205,24 +120,22 @@
     border-radius: 10px;
     color: var(--text-light);
     font-size: 1rem;
-    transition: all 0.3s ease;
-    margin: 0 auto;
-    display: block;
+    margin-bottom: 1rem;
+    text-align: center;
   }
 
-  .form-input:focus {
+  .name-input:focus {
     outline: none;
     border-color: var(--primary-green);
     box-shadow: 0 0 0 3px rgba(0, 255, 136, 0.2);
     background: rgba(255, 255, 255, 0.15);
   }
 
-  .form-input::placeholder {
+  .name-input::placeholder {
     color: rgba(184, 255, 184, 0.6);
   }
 
-  /* Buttons */
-  .btn {
+  .start-btn {
     background: linear-gradient(135deg, var(--primary-green), var(--dark-green));
     color: var(--bg-dark);
     border: none;
@@ -235,181 +148,52 @@
     text-transform: uppercase;
     letter-spacing: 1px;
     margin: 0.5rem;
-    position: relative;
-    overflow: hidden;
-    text-decoration: none;
-    display: inline-block;
   }
 
-  .btn::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    transition: left 0.5s ease;
-  }
-
-  .btn:hover::before {
-    left: 100%;
-  }
-
-  .btn:hover {
+  .start-btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(0, 255, 136, 0.4);
   }
 
-  .btn:active {
-    transform: translateY(0);
+  .start-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 
-  .btn-secondary {
-    background: linear-gradient(135deg, #666, #555);
-    color: var(--text-light);
-  }
-
-  .btn-secondary:hover {
-    box-shadow: 0 8px 25px rgba(102, 102, 102, 0.4);
-  }
-
-  .btn-discord {
-    background: linear-gradient(135deg, #5865F2, #4752C4);
-    color: white;
-  }
-
-  .btn-youtube {
-    background: linear-gradient(135deg, #FF0000, #CC0000);
-    color: white;
-  }
-
-  /* Game Area */
-  .game-area {
-    text-align: center;
-    margin: 3rem 0;
-  }
-
-  .cookie-btn {
-    background: none;
-    border: none;
-    font-size: 8rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    filter: drop-shadow(0 0 20px rgba(255, 204, 0, 0.5));
-    animation: bounce 2s ease-in-out infinite;
-    user-select: none;
-  }
-
-  @keyframes bounce {
-    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-    40% { transform: translateY(-10px); }
-    60% { transform: translateY(-5px); }
-  }
-
-  .cookie-btn:hover {
-    transform: scale(1.1);
-    filter: drop-shadow(0 0 30px rgba(255, 204, 0, 0.8));
-  }
-
-  .cookie-btn:active {
-    transform: scale(0.95);
-  }
-
-  .score-display {
-    font-family: 'Orbitron', monospace;
-    font-size: 2rem;
-    font-weight: 700;
-    color: var(--accent-gold);
-    text-shadow: 0 0 10px var(--accent-gold);
-    margin: 1rem 0;
-  }
-
-  .speed-display {
-    font-family: 'Orbitron', monospace;
-    font-size: 1.5rem;
-    color: var(--text-medium);
-    margin: 0.5rem 0;
-  }
-
-  /* Leaderboard */
-  .leaderboard {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    width: 280px;
-    background: var(--bg-light);
-    backdrop-filter: blur(15px);
-    border: 1px solid rgba(0, 255, 136, 0.3);
-    border-radius: 15px;
-    padding: 1.5rem;
-    box-shadow: var(--shadow-glow);
-    z-index: 1000;
-  }
-
-  .leaderboard h2 {
-    font-family: 'Orbitron', monospace;
-    color: var(--primary-green);
-    text-align: center;
-    margin-bottom: 1rem;
-    font-size: 1.2rem;
-  }
-
-  .leaderboard ol {
-    list-style: none;
-    counter-reset: leaderboard;
-  }
-
-  .leaderboard li {
-    counter-increment: leaderboard;
-    display: flex;
-    align-items: center;
-    padding: 0.5rem;
-    margin-bottom: 0.5rem;
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 8px;
-    transition: all 0.3s ease;
-  }
-
-  .leaderboard li:hover {
-    background: rgba(0, 255, 136, 0.1);
-    transform: translateX(5px);
-  }
-
-  .leaderboard li::before {
-    content: counter(leaderboard);
-    background: var(--primary-green);
-    color: var(--bg-dark);
-    width: 25px;
-    height: 25px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    margin-right: 0.75rem;
-    font-size: 0.8rem;
-  }
-
-  /* Messages */
-  .message {
-    padding: 1rem;
+  /* Game Canvas */
+  .game-canvas {
+    border: 3px solid var(--primary-green);
     border-radius: 10px;
+    background: #2a4a2a;
+    margin: 1rem auto;
+    display: block;
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+  }
+
+  .game-ui {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    font-family: 'Orbitron', monospace;
+  }
+
+  .score, .high-score {
+    font-size: 1.2rem;
+    color: var(--accent-gold);
+  }
+
+  .game-over {
+    color: #ff6b6b;
+    font-size: 1.5rem;
     margin: 1rem 0;
-    text-align: center;
-    font-weight: 500;
+    font-family: 'Orbitron', monospace;
   }
 
-  .message.error {
-    background: rgba(255, 68, 68, 0.2);
-    border: 1px solid #ff4444;
-    color: #ff8888;
-  }
-
-  .message.success {
-    background: rgba(0, 255, 136, 0.2);
-    border: 1px solid var(--primary-green);
-    color: var(--primary-green);
+  .instructions {
+    margin-top: 1rem;
+    color: var(--text-medium);
+    font-size: 0.9rem;
   }
 
   /* Footer */
@@ -422,62 +206,16 @@
     font-family: 'Orbitron', monospace;
   }
 
-  .visitor-counter {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background: var(--bg-light);
-    backdrop-filter: blur(10px);
-    padding: 0.75rem 1rem;
-    border-radius: 10px;
-    border: 1px solid rgba(0, 255, 136, 0.3);
-    font-size: 0.9rem;
-    color: var(--text-medium);
-  }
-
   /* Responsive */
   @media (max-width: 768px) {
-    .leaderboard {
-      position: static;
+    .game-canvas {
       width: 100%;
-      margin: 2rem 0;
-    }
-    
-    .cookie-btn {
-      font-size: 6rem;
-    }
-    
-    .score-display {
-      font-size: 1.5rem;
+      height: 200px;
     }
     
     h1 {
       font-size: 2.5rem;
     }
-  }
-
-  /* Animations for better UX */
-  .fade-in {
-    animation: fadeIn 0.5s ease-in;
-  }
-
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .hidden {
-    display: none;
-  }
-
-  .cookie-save-info {
-    background: rgba(0, 255, 136, 0.1);
-    border: 1px solid rgba(0, 255, 136, 0.3);
-    border-radius: 10px;
-    padding: 1rem;
-    margin: 1rem 0;
-    font-size: 0.9rem;
-    color: var(--text-medium);
   }
 </style>
 </head>
@@ -511,114 +249,49 @@
     </div>
   </div>
 
-  <!-- LOGIN AREA -->
-  <div id="loginArea" class="card fade-in">
-    <h2 style="text-align: center; color: var(--primary-green); margin-bottom: 1.5rem; font-family: 'Orbitron', monospace;">
-      🎮 Anmeldung
-    </h2>
-    <div class="form-group">
-      <label class="form-label">Minecraft Benutzername</label>
-      <input type="text" id="loginName" class="form-input" placeholder="Dein Minecraft Name" autocomplete="off" />
-    </div>
-    <div class="form-group">
-      <label class="form-label">Passwort</label>
-      <input type="password" id="loginPass" class="form-input" placeholder="Dein Passwort" autocomplete="off" />
-    </div>
-    <div style="text-align: center;">
-      <button class="btn" onclick="handleLogin()">🚀 Login / Registrieren</button>
-    </div>
-    <div id="loginError" class="message error hidden"></div>
-  </div>
-
-  <!-- USER AREA -->
-  <div id="userArea" class="card fade-in hidden">
-    <h2 style="text-align: center; color: var(--primary-green); margin-bottom: 1rem; font-family: 'Orbitron', monospace;">
-      👋 Willkommen zurück!
-    </h2>
-    <div style="text-align: center; margin-bottom: 1.5rem;">
-      <span style="color: var(--text-medium);">Angemeldet als:</span>
-      <span id="userNameDisplay" style="color: var(--accent-gold); font-weight: bold; margin-left: 0.5rem;"></span>
-    </div>
-    <div style="text-align: center;">
-      <button class="btn btn-secondary" onclick="toggleSettings()">⚙️ Einstellungen</button>
-      <button class="btn btn-secondary" onclick="handleLogout()">🚪 Abmelden</button>
+  <!-- DINO GAME -->
+  <div class="game-container">
+    <h2 class="game-title">🦕 Minecraft Dino Jump 🦕</h2>
+    
+    <div id="nameSection">
+      <input type="text" id="playerName" class="name-input" placeholder="Dein Name eingeben" maxlength="20" />
+      <br>
+      <button id="startBtn" class="start-btn" onclick="startGame()">🎮 Spiel Starten</button>
     </div>
 
-    <!-- SETTINGS -->
-    <div id="settingsArea" class="card hidden" style="margin-top: 1.5rem;">
-      <h3 style="color: var(--primary-green); text-align: center; margin-bottom: 1.5rem; font-family: 'Orbitron', monospace;">
-        ⚙️ Einstellungen
-      </h3>
-      
-      <div style="margin-bottom: 2rem;">
-        <h4 style="color: var(--text-medium); margin-bottom: 1rem;">Namen ändern</h4>
-        <div class="form-group">
-          <input type="text" id="newName" class="form-input" placeholder="Neuer Name" autocomplete="off" />
-        </div>
-        <div class="form-group">
-          <input type="password" id="oldPassForName" class="form-input" placeholder="Altes Passwort" autocomplete="off" />
-        </div>
-        <div style="text-align: center;">
-          <button class="btn" onclick="changeName()">✏️ Namen ändern</button>
-        </div>
-      </div>
-
-      <div style="border-top: 1px solid rgba(0, 255, 136, 0.3); padding-top: 2rem;">
-        <h4 style="color: var(--text-medium); margin-bottom: 1rem;">Passwort ändern</h4>
-        <div class="form-group">
-          <input type="password" id="oldPassForPass" class="form-input" placeholder="Altes Passwort" autocomplete="off" />
-        </div>
-        <div class="form-group">
-          <input type="password" id="newPass" class="form-input" placeholder="Neues Passwort" autocomplete="off" />
-        </div>
-        <div style="text-align: center;">
-          <button class="btn" onclick="changePassword()">🔒 Passwort ändern</button>
-        </div>
+    <div id="gameSection" style="display: none;">
+      <div class="game-ui">
+        <div class="score">Punkte: <span id="score">0</span></div>
+        <div class="high-score">Highscore (<span id="playerNameDisplay"></span>): <span id="highScore">0</span></div>
       </div>
       
-      <div id="settingsMsg"></div>
+      <canvas id="gameCanvas" class="game-canvas" width="800" height="300"></canvas>
+      
+      <div id="gameOverMsg" class="game-over" style="display: none;">
+        🎮 Game Over! Drücke LEERTASTE zum Neustarten
+      </div>
+      
+      <div class="instructions">
+        🎯 Drücke LEERTASTE zum Springen und vermeide die Kakteen!<br>
+        🌟 Sammle Diamanten für Extra-Punkte!
+      </div>
+      
+      <button class="start-btn" onclick="showNameSection()">👤 Namen Ändern</button>
     </div>
   </div>
-
-  <!-- GAME AREA -->
-  <div class="game-area">
-    <button id="cookieBtn" class="cookie-btn" title="Klicke um Punkte zu sammeln!">🍪</button>
-    <div class="score-display" id="scoreDisplay">Punkte: 0</div>
-    <div class="speed-display" id="speedDisplay">Multiplikator: 1.0x (wird nicht gespeichert)</div>
-    <div class="cookie-save-info">
-      💾 Deine Cookies werden automatisch gespeichert, aber der Multiplikator setzt sich nach jedem Login zurück!
-    </div>
-    <div style="margin-top: 1rem; color: var(--text-medium); font-size: 0.9rem;">
-      💡 Tipp: Je länger du spielst, desto schneller sammelst du Punkte!
-    </div>
-  </div>
-
-</div>
-
-<!-- LEADERBOARD -->
-<div id="leaderboard" class="leaderboard">
-  <h2>🏆 Top 10 Rangliste</h2>
-  <ol id="leaderboardList">
-    <li style="text-align: center; color: var(--text-medium);">Lade Daten...</li>
-  </ol>
-</div>
-
-<!-- VISITOR COUNTER -->
-<div class="visitor-counter">
-  👥 Besucher: <span id="visitorCount">0</span>
 </div>
 
 <!-- FOOTER -->
 <div class="footer">
   <div style="color: var(--primary-green); font-size: 1.2rem; margin-bottom: 1rem;">
-    © 2025 Farmsucht Minecraft Server
+    © 2022 Farmsucht Minecraft Server
   </div>
   <div style="color: var(--text-medium);">
     Programmiert mit ❤️ von zaa_ay
   </div>
   <div style="margin-top: 1rem; margin-bottom: 1rem;">
-    <a href="https://dsc.gg/farmsucht" target="_blank" class="btn btn-discord">📞 Discord</a>
-    <a href="https://www.youtube.com/@zaa_ay" target="_blank" class="btn btn-youtube">📺 YouTube (zaa_ay)</a>
+    <a href="https://dsc.gg/farmsucht" target="_blank" class="start-btn">📞 Discord</a>
+    <a href="https://www.youtube.com/@zaa_ay" target="_blank" class="start-btn">📺 YouTube (zaa_ay)</a>
   </div>
   <div style="color: var(--text-medium); font-size: 0.9rem;">
     💬 Für Hilfe im Discord ein Ticket erstellen
@@ -626,311 +299,299 @@
 </div>
 
 <script>
-  // Game State
-  let gameState = {
-    users: {},
-    currentUser: null,
-    score: 0,
-    speed: 1.0,
-    speedTimer: null,
-    visitorCount: Math.floor(Math.random() * 1000) + 500 // Simulated counter
+  // Game variables
+  let canvas, ctx;
+  let gameRunning = false;
+  let gameSpeed = 2;
+  let score = 0;
+  let highScore = 0;
+  let playerName = '';
+  
+  // Player (Minecraft Steve)
+  let player = {
+    x: 50,
+    y: 250,
+    width: 40,
+    height: 50,
+    dy: 0,
+    jumpPower: 15,
+    grounded: false,
+    color: '#8B4513'
   };
+  
+  // Obstacles and collectibles
+  let obstacles = [];
+  let diamonds = [];
+  let lastObstacle = 0;
+  let lastDiamond = 0;
+  
+  // Game loop
+  let animationId;
 
-  // Initialize
-  function init() {
-    loadGameData();
-    updateVisitorCounter();
-    if (gameState.currentUser && gameState.users[gameState.currentUser]) {
-      autoLogin();
-    }
-    updateLeaderboard();
+  function startGame() {
+    const nameInput = document.getElementById('playerName');
+    playerName = nameInput.value.trim();
     
-    // Add enter key listeners
-    document.getElementById('loginName').addEventListener('keypress', function(e) {
-      if (e.key === 'Enter') handleLogin();
-    });
-    document.getElementById('loginPass').addEventListener('keypress', function(e) {
-      if (e.key === 'Enter') handleLogin();
-    });
-  }
-
-  // Data persistence (using memory instead of localStorage)
-  function loadGameData() {
-    // Load from memory storage (simulated database)
-    const saved = getCookie('farmsucht_game_data');
-    if (saved) {
-      try {
-        const data = JSON.parse(saved);
-        gameState.users = data.users || {};
-        gameState.currentUser = data.currentUser || null;
-        gameState.visitorCount = data.visitorCount || gameState.visitorCount;
-      } catch (e) {
-        console.log('Error loading saved data');
-      }
-    }
-  }
-
-  function saveGameData() {
-    // Save to cookie (simulated database)
-    const dataToSave = {
-      users: gameState.users,
-      currentUser: gameState.currentUser,
-      visitorCount: gameState.visitorCount
-    };
-    setCookie('farmsucht_game_data', JSON.stringify(dataToSave), 365);
-  }
-
-  // Cookie functions for persistence
-  function setCookie(name, value, days) {
-    let d = new Date();
-    d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000));
-    let expires = "expires=" + d.toUTCString();
-    document.cookie = name + "=" + value + ";" + expires + ";path=/";
-  }
-
-  function getCookie(name) {
-    let cName = name + "=";
-    let decodedCookie = decodeURIComponent(document.cookie);
-    let ca = decodedCookie.split(';');
-    for (let i = 0; i < ca.length; i++) {
-      let c = ca[i];
-      while (c.charAt(0) == ' ') {
-        c = c.substring(1);
-      }
-      if (c.indexOf(cName) == 0) {
-        return c.substring(cName.length, c.length);
-      }
-    }
-    return "";
-  }
-
-  // Login/Register
-  function handleLogin() {
-    const name = document.getElementById('loginName').value.trim();
-    const pass = document.getElementById('loginPass').value.trim();
-    const errorDiv = document.getElementById('loginError');
-    
-    clearMessage(errorDiv);
-
-    if (name.length < 3 || pass.length < 3) {
-      showMessage(errorDiv, "Name und Passwort müssen mindestens 3 Zeichen haben.", "error");
+    if (playerName.length < 1) {
+      alert('Bitte gib deinen Namen ein!');
       return;
     }
-
-    if (gameState.users[name]) {
-      // Existing user - check password
-      if (gameState.users[name].pass !== pass) {
-        showMessage(errorDiv, "❌ Falsches Passwort!", "error");
-        return;
-      }
+    
+    document.getElementById('nameSection').style.display = 'none';
+    document.getElementById('gameSection').style.display = 'block';
+    document.getElementById('playerNameDisplay').textContent = playerName;
+    
+    // Load high score for this player
+    loadHighScore();
+    
+    // Initialize canvas
+    canvas = document.getElementById('gameCanvas');
+    ctx = canvas.getContext('2d');
+    
+    resetGame();
+    gameLoop();
+    
+    // Add event listeners
+    document.addEventListener('keydown', handleKeypress);
+    canvas.addEventListener('click', jump);
+  }
+  
+  function showNameSection() {
+    document.getElementById('nameSection').style.display = 'block';
+    document.getElementById('gameSection').style.display = 'none';
+    gameRunning = false;
+    if (animationId) {
+      cancelAnimationFrame(animationId);
+    }
+  }
+  
+  function resetGame() {
+    score = 0;
+    gameSpeed = 2;
+    player.y = 250;
+    player.dy = 0;
+    player.grounded = false;
+    obstacles = [];
+    diamonds = [];
+    lastObstacle = 0;
+    lastDiamond = 0;
+    gameRunning = true;
+    document.getElementById('gameOverMsg').style.display = 'none';
+    updateScore();
+  }
+  
+  function gameLoop() {
+    if (!gameRunning) return;
+    
+    update();
+    draw();
+    animationId = requestAnimationFrame(gameLoop);
+  }
+  
+  function update() {
+    // Update player
+    if (player.grounded && player.dy === 0) {
+      // Player is on ground
     } else {
-      // New user
-      gameState.users[name] = {
-        pass: pass,
-        score: 0,
-        joinDate: new Date().toISOString()
-      };
-    }
-
-    gameState.currentUser = name;
-    gameState.score = gameState.users[name].score || 0;
-    saveGameData();
-    
-    showUserArea();
-    startSpeedIncrease();
-    updateDisplay();
-    updateLeaderboard();
-    
-    // Clear login form
-    document.getElementById('loginName').value = '';
-    document.getElementById('loginPass').value = '';
-  }
-
-  function autoLogin() {
-    gameState.score = gameState.users[gameState.currentUser].score || 0;
-    showUserArea();
-    startSpeedIncrease();
-    updateDisplay();
-  }
-
-  function handleLogout() {
-    gameState.currentUser = null;
-    gameState.score = 0;
-    gameState.speed = 1.0;
-    stopSpeedIncrease();
-    saveGameData();
-    
-    showLoginArea();
-    updateDisplay();
-  }
-
-  // UI Management
-  function showLoginArea() {
-    document.getElementById('loginArea').classList.remove('hidden');
-    document.getElementById('userArea').classList.add('hidden');
-    document.getElementById('settingsArea').classList.add('hidden');
-  }
-
-  function showUserArea() {
-    document.getElementById('loginArea').classList.add('hidden');
-    document.getElementById('userArea').classList.remove('hidden');
-    document.getElementById('userNameDisplay').textContent = gameState.currentUser;
-  }
-
-  function toggleSettings() {
-    const settingsArea = document.getElementById('settingsArea');
-    settingsArea.classList.toggle('hidden');
-    clearMessage(document.getElementById('settingsMsg'));
-  }
-
-  // Cookie Game
-  document.getElementById('cookieBtn').addEventListener('click', function() {
-    if (!gameState.currentUser) {
-      alert('🎮 Bitte zuerst einloggen um zu spielen!');
-      return;
+      // Apply gravity
+      player.dy += 0.8;
+      player.y += player.dy;
+      
+      // Check ground collision
+      if (player.y >= 250) {
+        player.y = 250;
+        player.dy = 0;
+        player.grounded = true;
+      } else {
+        player.grounded = false;
+      }
     }
     
-    const points = Math.floor(gameState.speed);
-    gameState.score += points;
-    gameState.users[gameState.currentUser].score = gameState.score;
-    saveGameData();
-    updateDisplay();
-    updateLeaderboard();
+    // Spawn obstacles
+    if (Date.now() - lastObstacle > 1500 - (gameSpeed * 50)) {
+      obstacles.push({
+        x: canvas.width,
+        y: 260,
+        width: 30,
+        height: 40,
+        color: '#228B22'
+      });
+      lastObstacle = Date.now();
+    }
     
-    // Visual feedback
-    this.style.transform = 'scale(0.95)';
-    setTimeout(() => {
-      this.style.transform = '';
-    }, 100);
+    // Spawn diamonds
+    if (Date.now() - lastDiamond > 3000 + Math.random() * 2000) {
+      diamonds.push({
+        x: canvas.width,
+        y: 200 - Math.random() * 100,
+        width: 20,
+        height: 20,
+        color: '#00FFFF'
+      });
+      lastDiamond = Date.now();
+    }
+    
+    // Update obstacles
+    obstacles.forEach((obstacle, index) => {
+      obstacle.x -= gameSpeed;
+      
+      // Remove off-screen obstacles
+      if (obstacle.x + obstacle.width < 0) {
+        obstacles.splice(index, 1);
+        score += 10;
+        updateScore();
+      }
+      
+      // Check collision with player
+      if (checkCollision(player, obstacle)) {
+        gameOver();
+      }
+    });
+    
+    // Update diamonds
+    diamonds.forEach((diamond, index) => {
+      diamond.x -= gameSpeed;
+      
+      // Remove off-screen diamonds
+      if (diamond.x + diamond.width < 0) {
+        diamonds.splice(index, 1);
+      }
+      
+      // Check collision with player
+      if (checkCollision(player, diamond)) {
+        diamonds.splice(index, 1);
+        score += 50;
+        updateScore();
+      }
+    });
+    
+    // Increase game speed
+    gameSpeed += 0.001;
+  }
+  
+  function draw() {
+    // Clear canvas
+    ctx.fillStyle = '#87CEEB';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    // Draw ground
+    ctx.fillStyle = '#228B22';
+    ctx.fillRect(0, 290, canvas.width, 10);
+    
+    // Draw clouds
+    drawClouds();
+    
+    // Draw player (Minecraft Steve)
+    ctx.fillStyle = player.color;
+    ctx.fillRect(player.x, player.y, player.width, player.height);
+    
+    // Draw player details (simple minecraft style)
+    ctx.fillStyle = '#DEB887';
+    ctx.fillRect(player.x + 5, player.y + 5, 30, 20); // Head
+    ctx.fillStyle = '#000';
+    ctx.fillRect(player.x + 10, player.y + 10, 5, 5); // Eye
+    ctx.fillRect(player.x + 20, player.y + 10, 5, 5); // Eye
+    
+    // Draw obstacles (Cacti)
+    obstacles.forEach(obstacle => {
+      ctx.fillStyle = obstacle.color;
+      ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+      
+      // Cactus spikes
+      ctx.fillStyle = '#006400';
+      ctx.fillRect(obstacle.x - 5, obstacle.y + 10, 10, 10);
+      ctx.fillRect(obstacle.x + 25, obstacle.y + 15, 10, 10);
+    });
+    
+    // Draw diamonds
+    diamonds.forEach(diamond => {
+      ctx.fillStyle = diamond.color;
+      ctx.beginPath();
+      ctx.moveTo(diamond.x + diamond.width/2, diamond.y);
+      ctx.lineTo(diamond.x + diamond.width, diamond.y + diamond.height/2);
+      ctx.lineTo(diamond.x + diamond.width/2, diamond.y + diamond.height);
+      ctx.lineTo(diamond.x, diamond.y + diamond.height/2);
+      ctx.closePath();
+      ctx.fill();
+    });
+  }
+  
+  function drawClouds() {
+    ctx.fillStyle = '#FFF';
+    ctx.fillRect(100, 50, 60, 30);
+    ctx.fillRect(110, 40, 40, 20);
+    ctx.fillRect(300, 70, 80, 40);
+    ctx.fillRect(320, 60, 40, 20);
+    ctx.fillRect(500, 45, 70, 35);
+    ctx.fillRect(520, 35, 30, 20);
+  }
+  
+  function checkCollision(rect1, rect2) {
+    return rect1.x < rect2.x + rect2.width &&
+           rect1.x + rect1.width > rect2.x &&
+           rect1.y < rect2.y + rect2.height &&
+           rect1.y + rect1.height > rect2.y;
+  }
+  
+  function jump() {
+    if (player.grounded && gameRunning) {
+      player.dy = -player.jumpPower;
+      player.grounded = false;
+    }
+  }
+  
+  function handleKeypress(e) {
+    if (e.code === 'Space') {
+      e.preventDefault();
+      if (gameRunning) {
+        jump();
+      } else {
+        resetGame();
+        gameLoop();
+      }
+    }
+  }
+  
+  function gameOver() {
+    gameRunning = false;
+    document.getElementById('gameOverMsg').style.display = 'block';
+    
+    // Save high score
+    if (score > highScore) {
+      highScore = score;
+      saveHighScore();
+      updateScore();
+    }
+  }
+  
+  function updateScore() {
+    document.getElementById('score').textContent = score;
+    document.getElementById('highScore').textContent = highScore;
+  }
+  
+  function saveHighScore() {
+    localStorage.setItem(`farmsucht_highscore_${playerName}`, highScore);
+  }
+  
+  function loadHighScore() {
+    const saved = localStorage.getItem(`farmsucht_highscore_${playerName}`);
+    highScore = saved ? parseInt(saved) : 0;
+    updateScore();
+  }
+  
+  // Initialize
+  document.addEventListener('DOMContentLoaded', function() {
+    // Focus on name input
+    document.getElementById('playerName').focus();
+    
+    // Allow enter key to start game
+    document.getElementById('playerName').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        startGame();
+      }
+    });
   });
+</script>
 
-  // Speed System
-  function startSpeedIncrease() {
-    stopSpeedIncrease();
-    gameState.speed = 1.0;
-    gameState.speedTimer = setInterval(() => {
-      gameState.speed += 0.1;
-      updateSpeedDisplay();
-    }, 3000); // Increase every 3 seconds
-  }
-
-  function stopSpeedIncrease() {
-    if (gameState.speedTimer) {
-      clearInterval(gameState.speedTimer);
-      gameState.speedTimer = null;
-    }
-  }
-
-  // Settings Functions
-function changeName() {
-  const newName = document.getElementById('newName').value.trim();
-  const oldPass = document.getElementById('oldPassForName').value.trim();
-  const msgDiv = document.getElementById('settingsMsg');
-  
-  clearMessage(msgDiv);
-
-  if (newName.length < 3) {
-    showMessage(msgDiv, "❌ Neuer Name muss mindestens 3 Zeichen haben.", "error");
-    return;
-  }
-
-  if (gameState.users[gameState.currentUser].pass !== oldPass) {
-    showMessage(msgDiv, "❌ Falsches altes Passwort!", "error");
-    return;
-  }
-
-  if (gameState.users[newName]) {
-    showMessage(msgDiv, "❌ Dieser Name ist bereits vergeben!", "error");
-    return;
-  }
-
-  // Move user data to new name
-  gameState.users[newName] = gameState.users[gameState.currentUser];
-  delete gameState.users[gameState.currentUser];
-  gameState.currentUser = newName;
-  
-  saveGameData();
-  showMessage(msgDiv, "✅ Name erfolgreich geändert!", "success");
-  document.getElementById('userNameDisplay').textContent = newName;
-  
-  // Clear inputs
-  document.getElementById('newName').value = '';
-  document.getElementById('oldPassForName').value = '';
-  updateLeaderboard();
-}
-
-function changePassword() {
-  const oldPass = document.getElementById('oldPassForPass').value.trim();
-  const newPass = document.getElementById('newPass').value.trim();
-  const msgDiv = document.getElementById('settingsMsg');
-  
-  clearMessage(msgDiv);
-
-  if (newPass.length < 3) {
-    showMessage(msgDiv, "❌ Neues Passwort muss mindestens 3 Zeichen haben.", "error");
-    return;
-  }
-
-  if (gameState.users[gameState.currentUser].pass !== oldPass) {
-    showMessage(msgDiv, "❌ Falsches altes Passwort!", "error");
-    return;
-  }
-
-  gameState.users[gameState.currentUser].pass = newPass;
-  saveGameData();
-  showMessage(msgDiv, "✅ Passwort erfolgreich geändert!", "success");
-  
-  // Clear inputs
-  document.getElementById('oldPassForPass').value = '';
-  document.getElementById('newPass').value = '';
-}
-
-// Display Functions
-function updateDisplay() {
-  document.getElementById('scoreDisplay').textContent = `Punkte: ${gameState.score}`;
-  updateSpeedDisplay();
-}
-
-function updateSpeedDisplay() {
-  document.getElementById('speedDisplay').textContent = `Multiplikator: ${gameState.speed.toFixed(1)}x (wird nicht gespeichert)`;
-}
-
-function updateLeaderboard() {
-  const leaderboardList = document.getElementById('leaderboardList');
-  
-  // Create sorted array of users by score
-  const sortedUsers = Object.entries(gameState.users)
-    .map(([name, data]) => ({ name, score: data.score || 0 }))
-    .sort((a, b) => b.score - a.score)
-    .slice(0, 10);
-
-  if (sortedUsers.length === 0) {
-    leaderboardList.innerHTML = '<li style="text-align: center; color: var(--text-medium);">Noch keine Spieler</li>';
-    return;
-  }
-
-  leaderboardList.innerHTML = sortedUsers
-    .map(user => `<li><span style="flex: 1;">${user.name}</span><span style="color: var(--accent-gold);">${user.score}</span></li>`)
-    .join('');
-}
-
-function updateVisitorCounter() {
-  gameState.visitorCount++;
-  document.getElementById('visitorCount').textContent = gameState.visitorCount;
-  saveGameData();
-}
-
-// Message Functions
-function showMessage(element, message, type) {
-  element.textContent = message;
-  element.className = `message ${type}`;
-  element.classList.remove('hidden');
-}
-
-function clearMessage(element) {
-  element.classList.add('hidden');
-  element.textContent = '';
-}
-
-// Initialize on page load
-document.addEventListener('DOMContentLoaded', init);
+</body>
+</html>

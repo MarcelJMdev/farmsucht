@@ -2,160 +2,121 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🌾 Farmsucht Minecraft Server</title>
+  <title>🌾 Farmsucht Clicker</title>
   <style>
     body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Minecraftia', monospace;
-      background: linear-gradient(to bottom right, #a8e063, #56ab2f);
-      color: #222;
-      overflow: hidden;
-    }
-    h1, h2, h3, p {
+      background: linear-gradient(135deg, #a8e6cf, #dcedc1);
+      font-family: 'Minecraftia', sans-serif;
+      color: #2d2d2d;
       text-align: center;
-      margin: 10px;
-    }
-    .container {
-      max-width: 800px;
-      margin: auto;
       padding: 20px;
-      background: #e8f5e9;
-      border-radius: 12px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.2);
+    }
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+      color: #3e8e41;
     }
     .button {
-      display: inline-block;
-      background: #34a853;
+      background: #55aa55;
+      border: 2px solid #3e8e41;
       color: white;
+      font-size: 1.5rem;
       padding: 10px 20px;
       margin: 10px;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+    .button:hover {
+      background: #449944;
+    }
+    #cookie {
+      width: 150px;
+      height: 150px;
+      cursor: pointer;
+    }
+    .scoreboard {
+      font-size: 1.2rem;
+      margin: 20px;
+    }
+    .footer {
+      margin-top: 40px;
+      font-size: 0.9rem;
+      color: #444;
+    }
+    .footer a {
+      color: #3e8e41;
       text-decoration: none;
-      border-radius: 10px;
-      font-weight: bold;
+      margin: 0 10px;
     }
-    #gameCanvas {
-      display: block;
-      margin: 20px auto;
-      background: #dcedc8;
-      border: 3px solid #388e3c;
+    .rankings {
+      margin-top: 20px;
+      text-align: center;
     }
-    #counter {
-      position: fixed;
-      bottom: 10px;
-      right: 10px;
+    .rankings h3 {
+      color: #3e8e41;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>🌾 Farmsucht Minecraft Server 🌾</h1>
-    <h2>IP: farmsucht.eu | Version: 1.21.4 | Modus: Citybuild</h2>
+  <h1>🌾 Farmsucht Minecraft Server 🌾</h1>
+  <p>IP: <b>farmsucht.eu</b> | Version: <b>1.21.4</b> | Modus: <b>Citybuild</b></p>
 
-    <canvas id="gameCanvas" width="600" height="200"></canvas>
-    <h3>Punkte: <span id="score">0</span> | Geschwindigkeit: <span id="speed">1x</span></h3>
-    <button onclick="restartGame()" class="button">Neustarten</button>
+  <div class="scoreboard">
+    <p><b>Punkte:</b> <span id="score">0</span></p>
+  </div>
 
-    <div style="text-align: center;">
-      <a href="https://dsc.gg/farmsucht" class="button">🔗 Discord: dsc.gg/farmsucht</a>
-      <a href="https://youtube.com/@zaa_ay" class="button">▶️ YouTube: zaa_ay</a>
+  <img src="https://static.wikia.nocookie.net/minecraft_gamepedia/images/4/48/Cookie_JE3_BE3.png" id="cookie" onclick="addPoint()">
+
+  <div class="rankings">
+    <h3>Rangliste (Lokal)</h3>
+    <ol id="rankList"></ol>
+  </div>
+
+  <button class="button" onclick="resetGame()">Neustarten</button>
+
+  <div class="footer">
+    <a href="https://dsc.gg/farmsucht" target="_blank">🔗 Discord</a>
+    <a href="https://youtube.com/@zaa_ay" target="_blank">▶️ YouTube</a>
+    <p>2025 © Farmsucht | Programmiert von <b>zaa_ay</b> 🌟</p>
+    <div style="position: fixed; bottom: 10px; right: 10px; font-size: 0.8rem;">
+      <script type='text/javascript' src='https://www.freevisitorcounters.com/auth.php?id=ed0269d4f07f8324e1f49abeed46ba120c3c7da7'></script>
+      <script type="text/javascript" src="https://www.freevisitorcounters.com/en/home/counter/1349906/t/1"></script>
     </div>
   </div>
 
-  <div id="counter">
-    <script type='text/javascript' src='https://www.freevisitorcounters.com/auth.php?id=ed0269d4f07f8324e1f49abeed46ba120c3c7da7'></script>
-    <script type="text/javascript" src="https://www.freevisitorcounters.com/en/home/counter/1349906/t/1"></script>
-  </div>
-
   <script>
-    const canvas = document.getElementById("gameCanvas");
-    const ctx = canvas.getContext("2d");
-
     let score = 0;
-    let speed = 1;
-    let running = true;
+    let rankings = JSON.parse(localStorage.getItem('rankings')) || [];
 
-    const player = {
-      x: 50,
-      y: 150,
-      w: 20,
-      h: 20,
-      vy: 0,
-      jumping: false
-    };
-
-    const blocks = [];
-    function spawnBlock() {
-      blocks.push({ x: canvas.width, y: 160, w: 20, h: 20 });
-    }
-
-    function update() {
-      if (!running) return;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      // Player Gravity
-      player.vy += 1;
-      player.y += player.vy;
-      if (player.y > 150) {
-        player.y = 150;
-        player.vy = 0;
-        player.jumping = false;
-      }
-
-      // Draw Player
-      ctx.fillStyle = "#4caf50";
-      ctx.fillRect(player.x, player.y, player.w, player.h);
-
-      // Update & draw blocks
-      for (let i = 0; i < blocks.length; i++) {
-        blocks[i].x -= speed * 2;
-        ctx.fillStyle = "#8d6e63";
-        ctx.fillRect(blocks[i].x, blocks[i].y, blocks[i].w, blocks[i].h);
-
-        if (blocks[i].x < -20) {
-          blocks.splice(i, 1);
-          score++;
-          speed = 1 + score / 10;
-        }
-
-        // Collision
-        if (
-          player.x < blocks[i].x + blocks[i].w &&
-          player.x + player.w > blocks[i].x &&
-          player.y < blocks[i].y + blocks[i].h &&
-          player.y + player.h > blocks[i].y
-        ) {
-          running = false;
-          alert("Game Over! Punkte: " + score);
-        }
-      }
-
+    function addPoint() {
+      score++;
       document.getElementById("score").innerText = score;
-      document.getElementById("speed").innerText = speed.toFixed(1) + "x";
-
-      requestAnimationFrame(update);
     }
 
-    document.addEventListener("keydown", (e) => {
-      if (e.code === "Space" && !player.jumping) {
-        player.vy = -15;
-        player.jumping = true;
+    function resetGame() {
+      const name = prompt("Dein Name für die Rangliste:");
+      if (name) {
+        rankings.push({ name: name, score: score });
+        rankings.sort((a, b) => b.score - a.score);
+        rankings = rankings.slice(0, 5); // Top 5
+        localStorage.setItem('rankings', JSON.stringify(rankings));
+        updateRanking();
       }
-    });
-
-    function restartGame() {
       score = 0;
-      speed = 1;
-      blocks.length = 0;
-      player.y = 150;
-      player.vy = 0;
-      running = true;
-      update();
+      document.getElementById("score").innerText = score;
     }
 
-    setInterval(spawnBlock, 1500);
-    update();
+    function updateRanking() {
+      const rankList = document.getElementById("rankList");
+      rankList.innerHTML = '';
+      rankings.forEach((entry, index) => {
+        const li = document.createElement("li");
+        li.textContent = `#${index + 1} ${entry.name} - ${entry.score} Punkte`;
+        rankList.appendChild(li);
+      });
+    }
+
+    updateRanking();
   </script>
 </body>
 </html>

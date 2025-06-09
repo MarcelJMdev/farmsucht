@@ -31,15 +31,18 @@
       max-width: 600px;
       text-align: center;
     }
-    p {
-      font-size: 1.3rem;
-      margin-top: 1rem;
+    .counter {
+      margin-top: 1.5rem;
     }
     footer {
       margin-top: auto;
       padding: 1rem;
       font-size: 0.9rem;
       opacity: 0.7;
+    }
+    a {
+      color: #fff;
+      text-decoration: underline;
     }
   </style>
 </head>
@@ -48,18 +51,13 @@
   <main>
     <h2>Willkommen auf Farmsucht!</h2>
     <p>Schön, dass du hier bist.</p>
-    <p id="visit-count">Besuche auf diesem Gerät: 0</p>
+    <div class="counter">
+      <!-- Besucherzähler von freevisitorcounters.com -->
+      <a href="https://www.free-counters.org/" target="_blank" style="color:#fff;">Besucherzähler powered by Free-Counters.org</a><br />
+      <script type="text/javascript" src="https://www.freevisitorcounters.com/auth.php?id=ed0269d4f07f8324e1f49abeed46ba120c3c7da7"></script>
+      <script type="text/javascript" src="https://www.freevisitorcounters.com/en/home/counter/1349906/t/1"></script>
+    </div>
   </main>
   <footer>© 2025 Farmsucht</footer>
-
-  <script>
-    // Besucherzähler per localStorage
-    let visits = localStorage.getItem('farmsucht_visits');
-    if (!visits) visits = 0;
-    visits = parseInt(visits) + 1;
-    localStorage.setItem('farmsucht_visits', visits);
-
-    document.getElementById('visit-count').textContent = `Besuche auf diesem Gerät: ${visits}`;
-  </script>
 </body>
 </html>

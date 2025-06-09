@@ -18,20 +18,25 @@
       justify-content: center;
       text-align: center;
       padding: 20px;
+      overflow-x: hidden;
+      user-select: none;
     }
     header {
       font-size: 3rem;
       font-weight: 900;
       text-shadow: 2px 2px 6px rgba(0,0,0,0.3);
-      margin-bottom: 10px;
+      margin-bottom: 20px;
     }
     main {
       background: rgba(0,0,0,0.2);
       padding: 30px 40px;
       border-radius: 20px;
       box-shadow: 0 8px 20px rgba(0,0,0,0.25);
-      max-width: 600px;
+      max-width: 700px;
       width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
     h2 {
       margin-top: 0;
@@ -42,13 +47,8 @@
       font-size: 1.2rem;
       margin-bottom: 25px;
     }
-    .counter {
-      font-size: 1.5rem;
-      font-weight: 700;
-      margin-bottom: 30px;
-    }
     footer {
-      margin-top: auto;
+      margin-top: 30px;
       padding-top: 20px;
       display: flex;
       gap: 15px;
@@ -76,6 +76,73 @@
       font-size: 1.1rem;
       text-shadow: 1px 1px 3px rgba(0,0,0,0.4);
     }
+    /* Besucherzähler unten rechts */
+    .counter-fixed {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      background: rgba(0,0,0,0.5);
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 1rem;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+      color: #fff;
+      z-index: 9999;
+      user-select: none;
+    }
+
+    /* Dino-Game Styles */
+    #game-container {
+      margin-top: 20px;
+      width: 320px;
+      height: 150px;
+      background: #fff;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+      position: relative;
+      overflow: hidden;
+      user-select: none;
+    }
+    #dino {
+      position: absolute;
+      bottom: 20px;
+      left: 40px;
+      width: 40px;
+      height: 40px;
+      background: url('https://i.imgur.com/N7rlQYt.png') no-repeat center / contain;
+      transition: bottom 0.2s;
+    }
+    #cactus {
+      position: absolute;
+      bottom: 20px;
+      right: -40px;
+      width: 20px;
+      height: 40px;
+      background: url('https://i.imgur.com/HpGVZXp.png') no-repeat center / contain;
+      animation: cactus-move 2s linear infinite;
+    }
+    @keyframes cactus-move {
+      0% { right: -40px; }
+      100% { right: 360px; }
+    }
+    #score {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: #333;
+      user-select: none;
+    }
+    /* Sprung Animation */
+    .jump {
+      animation: jump 0.5s ease;
+    }
+    @keyframes jump {
+      0%, 100% { bottom: 20px; }
+      50% { bottom: 90px; }
+    }
   </style>
 </head>
 <body>
@@ -83,21 +150,102 @@
   <main>
     <h2>Willkommen auf Farmsucht!</h2>
     <p>Schön, dass du hier bist.</p>
-    <div class="counter">
-      Besuche: <br />
-      <!-- Besucherzähler von freevisitorcounters.com -->
-      <a href="https://www.free-counters.org/" target="_blank" style="color:#fff; font-weight: normal; font-size: 0.9rem; text-decoration: underline;">powered by Free-Counters.org</a><br />
-      <script type="text/javascript" src="https://www.freevisitorcounters.com/auth.php?id=ed0269d4f07f8324e1f49abeed46ba120c3c7da7"></script>
-      <script type="text/javascript" src="https://www.freevisitorcounters.com/en/home/counter/1349906/t/1"></script>
+
+    <div id="game-container" tabindex="0" aria-label="Dino Jump Game" role="application" title="Drücke Leertaste oder Klick zum Springen">
+      <div id="dino"></div>
+      <div id="cactus"></div>
+      <div id="score">Punkte: 0</div>
+    </div>
+
+    <footer>
+      <a href="https://dsc.gg/farmsucht" target="_blank" class="button" rel="noopener noreferrer">Discord: zaa_ay</a>
+      <a href="https://www.youtube.com/@zaa_ay" target="_blank" class="button" rel="noopener noreferrer">YouTube: zaa_ay</a>
+    </footer>
+
+    <div class="server-info" style="margin-top: 20px;">
+      Server IP: <strong>farmsucht.eu</strong><br />
+      Minecraft 1.21.4 Citybuild Server
     </div>
   </main>
-  <footer>
-    <a href="https://discord.gg/deinlink" target="_blank" class="button">Discord: zaa_ay</a>
-    <a href="https://www.youtube.com/@zaa_ay" target="_blank" class="button">YouTube: zaa_ay</a>
-  </footer>
-  <div class="server-info">
-    Server IP: <strong>farmsucht.eu</strong><br />
-    Minecraft 1.21.4 Citybuild Server
+
+  <div class="counter-fixed">
+    Besuche:<br />
+    <a href="https://www.free-counters.org/" target="_blank" style="color:#fff; font-weight: normal; font-size: 0.8rem; text-decoration: underline;">powered by Free-Counters.org</a><br />
+    <script type="text/javascript" src="https://www.freevisitorcounters.com/auth.php?id=ed0269d4f07f8324e1f49abeed46ba120c3c7da7"></script>
+    <script type="text/javascript" src="https://www.freevisitorcounters.com/en/home/counter/1349906/t/1"></script>
   </div>
+
+  <script>
+    const dino = document.getElementById('dino');
+    const cactus = document.getElementById('cactus');
+    const scoreDisplay = document.getElementById('score');
+    const gameContainer = document.getElementById('game-container');
+    let score = 0;
+    let isJumping = false;
+    let gameOver = false;
+
+    // Springen Funktion
+    function jump() {
+      if (isJumping || gameOver) return;
+      isJumping = true;
+      dino.classList.add('jump');
+      setTimeout(() => {
+        dino.classList.remove('jump');
+        isJumping = false;
+      }, 500);
+    }
+
+    // Prüfen auf Kollision
+    function checkCollision() {
+      const dinoRect = dino.getBoundingClientRect();
+      const cactusRect = cactus.getBoundingClientRect();
+
+      if (
+        cactusRect.left < dinoRect.right &&
+        cactusRect.right > dinoRect.left &&
+        cactusRect.bottom > dinoRect.top &&
+        cactusRect.top < dinoRect.bottom
+      ) {
+        return true;
+      }
+      return false;
+    }
+
+    // Punkte erhöhen
+    function increaseScore() {
+      if (gameOver) return;
+      score++;
+      scoreDisplay.textContent = 'Punkte: ' + score;
+    }
+
+    // Game Loop
+    function gameLoop() {
+      if (checkCollision()) {
+        gameOver = true;
+        cactus.style.animationPlayState = 'paused';
+        alert('Game Over! Deine Punkte: ' + score);
+        score = 0;
+        scoreDisplay.textContent = 'Punkte: 0';
+        cactus.style.animationPlayState = 'running';
+        gameOver = false;
+      } else {
+        increaseScore();
+      }
+    }
+
+    // Intervall für Game Loop
+    let gameInterval = setInterval(gameLoop, 1500);
+
+    // Event Listener für springen: Leertaste & Klick
+    window.addEventListener('keydown', e => {
+      if (e.code === 'Space') {
+        e.preventDefault();
+        jump();
+      }
+    });
+    gameContainer.addEventListener('click', () => {
+      jump();
+    });
+  </script>
 </body>
 </html>

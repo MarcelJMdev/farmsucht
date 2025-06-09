@@ -1,202 +1,393 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>🌾 Farmsucht Minecraft Server 🌾</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Minecraftia', monospace;
-      background: linear-gradient(to bottom right, #c4f0a0, #79c869);
-      color: #fff;
-      text-align: center;
-      overflow-x: hidden;
-      font-size: 1.2em;
-    }
-    h1 {
-      font-size: 3em;
-      margin-top: 20px;
-      text-shadow: 2px 2px #000;
-    }
-    .info {
-      font-size: 1.5em;
-      margin: 10px;
-      text-shadow: 1px 1px #000;
-    }
-    .cookie {
-      font-size: 6em;
-      cursor: pointer;
-      transition: transform 0.1s;
-      user-select: none;
-      width: fit-content;
-      margin: auto;
-    }
-    .cookie:active {
-      transform: scale(0.95);
-    }
-    .score {
-      font-size: 2em;
-      margin: 10px;
-      text-shadow: 1px 1px #000;
-    }
-    .footer {
-      margin-top: 60px;
-      font-size: 1em;
-      color: #ccc;
-    }
-    .buttons a, .buttons button {
-      display: inline-block;
-      margin: 10px 15px;
-      padding: 12px 25px;
-      background-color: #2e7d32;
-      color: white;
-      border-radius: 12px;
-      text-decoration: none;
-      font-weight: bold;
-      box-shadow: 3px 3px 7px rgba(0,0,0,0.4);
-    }
-    .buttons a:hover, .buttons button:hover {
-      background-color: #1b5e20;
-    }
-    .leaderboard {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      background: rgba(0, 0, 0, 0.5);
-      padding: 15px;
-      border-radius: 10px;
-      font-size: 1em;
-      max-width: 250px;
-    }
-    .counter {
-      position: fixed;
-      bottom: 10px;
-      right: 10px;
-    }
-    .login-box {
-      margin-top: 20px;
-    }
-    input[type="text"], input[type="password"] {
-      padding: 10px;
-      margin: 5px;
-      border-radius: 5px;
-      border: none;
-      font-size: 1em;
-    }
-    button {
-      padding: 10px 20px;
-      background-color: #388e3c;
-      border: none;
-      color: white;
-      border-radius: 5px;
-      cursor: pointer;
-      font-weight: bold;
-      font-size: 1em;
-    }
-    button:hover {
-      background-color: #2e7d32;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Farmsucht Minecraft Server</title>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+  body {
+    margin: 0; padding: 0;
+    background: linear-gradient(to bottom, #0b3d0b, #072207);
+    color: #d7f0d7;
+    font-family: 'Press Start 2P', monospace;
+    user-select: none;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  #container {
+    flex-grow: 1;
+    max-width: 1000px;
+    margin: auto;
+    padding: 20px;
+    text-align: center;
+  }
+  h1 {
+    font-size: 3em;
+    margin-bottom: 0.2em;
+    color: #6df46d;
+    text-shadow: 2px 2px 0 #083508;
+  }
+  #serverInfo {
+    font-size: 1.2em;
+    margin-bottom: 1.2em;
+    color: #a0dca0;
+  }
+  #loginArea, #userArea {
+    margin-bottom: 1.5em;
+    background: rgba(0,0,0,0.4);
+    padding: 15px;
+    border-radius: 10px;
+  }
+  input[type="text"], input[type="password"] {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 1em;
+    padding: 8px;
+    margin: 5px 10px;
+    width: 180px;
+    border-radius: 5px;
+    border: none;
+    outline: none;
+  }
+  button {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 1em;
+    padding: 10px 20px;
+    margin: 10px 5px 0 5px;
+    border: none;
+    border-radius: 7px;
+    background-color: #34a834;
+    color: #0b1b0b;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  button:hover {
+    background-color: #51d651;
+  }
+  #cookieBtn {
+    font-size: 3em;
+    background: none;
+    border: none;
+    cursor: pointer;
+    user-select: none;
+    margin: 20px auto;
+    display: block;
+  }
+  #cookieBtn:focus {
+    outline: none;
+  }
+  #cookieBtn::selection {
+    background: transparent;
+  }
+  #scoreDisplay {
+    font-size: 1.5em;
+    margin-top: 10px;
+    text-shadow: 1px 1px 0 #082508;
+  }
+  #speedDisplay {
+    font-size: 1.2em;
+    margin-top: 5px;
+    color: #a0dca0;
+  }
+  #leaderboard {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(0,0,0,0.6);
+    border-radius: 10px;
+    padding: 10px 15px;
+    width: 220px;
+    color: #a3e6a3;
+    font-size: 0.8em;
+    user-select: none;
+  }
+  #leaderboard h2 {
+    margin: 0 0 10px 0;
+    font-size: 1.2em;
+    color: #6df46d;
+  }
+  #leaderboard ol {
+    padding-left: 18px;
+    margin: 0;
+    text-align: left;
+  }
+  #leaderboard li {
+    margin-bottom: 4px;
+  }
+  #settingsArea {
+    display: none;
+    margin-top: 20px;
+    background: rgba(0,0,0,0.4);
+    padding: 15px;
+    border-radius: 10px;
+  }
+  #settingsArea input {
+    width: 160px;
+  }
+  #footer {
+    text-align: center;
+    padding: 15px;
+    font-size: 0.9em;
+    color: black;
+    background: #a0dca0;
+    font-family: 'Press Start 2P', monospace;
+    user-select: none;
+  }
+  #links {
+    margin-top: 10px;
+    font-size: 1.1em;
+  }
+  #links a {
+    color: #6df46d;
+    margin: 0 10px;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  #links a:hover {
+    text-decoration: underline;
+  }
+  .error {
+    color: #ff4444;
+    font-size: 0.9em;
+  }
+</style>
 </head>
 <body>
+
+<div id="container">
   <h1>🌾 Farmsucht Minecraft Server 🌾</h1>
-  <div class="info">IP: <strong>farmsucht.eu</strong> | Version: 1.21.4 | Modus: Citybuild</div>
+  <div id="serverInfo">IP: farmsucht.eu | Version: 1.21.4 | Modus: Citybuild</div>
 
-  <div class="login-box" id="loginBox">
-    <p><strong>Minecraft-Namen verwenden:</strong></p>
-    <input type="text" id="username" placeholder="Benutzername" />
-    <input type="password" id="password" placeholder="Passwort" />
-    <button onclick="login()">Login</button>
+  <!-- LOGIN -->
+  <div id="loginArea">
+    <div><strong>Minecraft Namen verwenden</strong></div>
+    <input type="text" id="loginName" placeholder="Benutzername" autocomplete="off" />
+    <input type="password" id="loginPass" placeholder="Passwort" autocomplete="off" />
+    <button onclick="handleLogin()">Login / Registrieren</button>
+    <div id="loginError" class="error"></div>
   </div>
 
-  <div class="score" id="scoreBox" style="display:none">Punkte: <span id="score">0</span></div>
-  <div class="cookie" onclick="clickCookie()" id="cookie" style="display:none">🍪</div>
+  <!-- USER INFO -->
+  <div id="userArea" style="display:none;">
+    <div>Angemeldet als: <span id="userNameDisplay"></span></div>
+    <button onclick="toggleSettings()">⚙️ Einstellungen</button>
+    <button onclick="handleLogout()">Abmelden</button>
 
-  <div class="buttons">
-    <a href="https://dsc.gg/farmsucht" target="_blank">🔗 Discord</a>
-    <a href="https://youtube.com/@zaa_ay" target="_blank">▶️ YouTube</a>
-    <button onclick="logout()" id="logoutBtn" style="display:none">🚪 Abmelden</button>
-    <button onclick="openSettings()" id="settingsBtn" style="display:none">⚙️ Einstellungen</button>
+    <div id="settingsArea">
+      <h3>Einstellungen</h3>
+      <input type="text" id="newName" placeholder="Neuer Name" autocomplete="off" /><br />
+      <input type="password" id="oldPassForName" placeholder="Altes Passwort" autocomplete="off" /><br />
+      <button onclick="changeName()">Namen ändern</button><br /><br />
+
+      <input type="password" id="oldPassForPass" placeholder="Altes Passwort" autocomplete="off" /><br />
+      <input type="password" id="newPass" placeholder="Neues Passwort" autocomplete="off" /><br />
+      <button onclick="changePassword()">Passwort ändern</button><br />
+      <div id="settingsMsg" class="error"></div>
+    </div>
   </div>
 
-  <div class="leaderboard">
-    <strong>🏆 Rangliste</strong>
-    <ol id="leaderboard" style="padding-left: 20px;"></ol>
-  </div>
+  <!-- SPIELBEREICH -->
+  <button id="cookieBtn" title="Klicke um Punkte zu sammeln">🍪</button>
+  <div id="scoreDisplay">Punkte: 0</div>
+  <div id="speedDisplay">Geschwindigkeit: 1.0x</div>
 
-  <div class="footer">© 2025 Farmsucht – Programmiert von <strong>zaa_ay</strong></div>
-
-  <div class="counter">
+  <!-- Besucherzähler -->
+  <div style="position: fixed; bottom: 20px; right: 20px; font-size: 0.9em; color: #6df46d; user-select:none;">
+    Besucher: 
+    <a href='https://www.free-counters.org/'>https://www.Free-Counters.org</a>
     <script type='text/javascript' src='https://www.freevisitorcounters.com/auth.php?id=ed0269d4f07f8324e1f49abeed46ba120c3c7da7'></script>
     <script type="text/javascript" src="https://www.freevisitorcounters.com/en/home/counter/1349906/t/1"></script>
   </div>
 
-  <script>
-    let score = 0;
-    let currentUser = localStorage.getItem("currentUser") || "";
-    let users = JSON.parse(localStorage.getItem("users")) || {};
+  <!-- Rangliste -->
+  <div id="leaderboard">
+    <h2>Rangliste Top 10</h2>
+    <ol id="leaderboardList"></ol>
+  </div>
 
-    function login() {
-      const name = document.getElementById("username").value.trim();
-      const pw = document.getElementById("password").value;
-      if (!name || !pw) return alert("Bitte alles ausfüllen!");
-      if (users[name] && users[name].password !== pw) return alert("Falsches Passwort!");
-      if (!users[name]) users[name] = { password: pw, score: 0 };
-      localStorage.setItem("users", JSON.stringify(users));
-      localStorage.setItem("currentUser", name);
-      showGame();
+</div>
+
+<!-- FOOTER -->
+<div id="footer">
+  2025 Farmsucht | programmiert von zaa_ay
+</div>
+
+<script>
+  const maxLeaderboard = 10;
+  let users = JSON.parse(localStorage.getItem("users") || "{}");
+  let currentUser = localStorage.getItem("currentUser");
+  let score = 0;
+  let speed = 1.0;
+  let speedIncreaseInterval;
+  let speedIncrement = 0.1;
+  let speedUpdateTimer;
+
+  // Utility: Save users DB
+  function saveUsers() {
+    localStorage.setItem("users", JSON.stringify(users));
+  }
+
+  // Login oder Registrierung
+  function handleLogin() {
+    let name = document.getElementById("loginName").value.trim();
+    let pass = document.getElementById("loginPass").value.trim();
+    let err = document.getElementById("loginError");
+    err.textContent = "";
+
+    if (name.length < 3 || pass.length < 3) {
+      err.textContent = "Name und Passwort mindestens 3 Zeichen.";
+      return;
+    }
+    if (users[name]) {
+      // User existiert - Passwort check
+      if (users[name].pass !== pass) {
+        err.textContent = "Falsches Passwort.";
+        return;
+      }
+    } else {
+      // Neuen User anlegen
+      users[name] = {pass: pass, score: 0};
+      saveUsers();
     }
 
-    function logout() {
-      localStorage.removeItem("currentUser");
-      location.reload();
+    currentUser = name;
+    localStorage.setItem("currentUser", currentUser);
+    score = users[currentUser].score || 0;
+
+    document.getElementById("loginArea").style.display = "none";
+    document.getElementById("userArea").style.display = "block";
+    document.getElementById("userNameDisplay").textContent = currentUser;
+    document.getElementById("scoreDisplay").textContent = "Punkte: " + score;
+    document.getElementById("speedDisplay").textContent = "Geschwindigkeit: " + speed.toFixed(1) + "x";
+    updateLeaderboard();
+    startSpeedIncrease();
+  }
+
+  // Logout
+  function handleLogout() {
+    currentUser = null;
+    localStorage.removeItem("currentUser");
+    document.getElementById("loginArea").style.display = "block";
+    document.getElementById("userArea").style.display = "none";
+    stopSpeedIncrease();
+    score = 0;
+    speed = 1.0;
+    document.getElementById("scoreDisplay").textContent = "Punkte: 0";
+    document.getElementById("speedDisplay").textContent = "Geschwindigkeit: 1.0x";
+    clearInterval(speedUpdateTimer);
+  }
+
+  // Cookie click
+  document.getElementById("cookieBtn").addEventListener("click", () => {
+    if (!currentUser) return alert("Bitte zuerst einloggen!");
+    score++;
+    users[currentUser].score = score;
+    saveUsers();
+    document.getElementById("scoreDisplay").textContent = "Punkte: " + score;
+  });
+
+  // Rangliste updaten
+  function updateLeaderboard() {
+    let list = document.getElementById("leaderboardList");
+    list.innerHTML = "";
+    // Sortiere Nutzer nach Score absteigend
+    let sortedUsers = Object.entries(users)
+      .sort((a,b) => b[1].score - a[1].score)
+      .slice(0, maxLeaderboard);
+    for(let i=0; i < sortedUsers.length; i++) {
+      let [name, data] = sortedUsers[i];
+      let li = document.createElement("li");
+      li.textContent = `#${i+1} ${name}: ${data.score} Punkte`;
+      list.appendChild(li);
+    }
+  }
+
+  // Einstellungen anzeigen/ausblenden
+  function toggleSettings() {
+    let s = document.getElementById("settingsArea");
+    s.style.display = (s.style.display === "block") ? "none" : "block";
+    document.getElementById("settingsMsg").textContent = "";
+  }
+
+  // Namen ändern
+  function changeName() {
+    let newName = document.getElementById("newName").value.trim();
+    let oldPass = document.getElementById("oldPassForName").value.trim();
+    let msg = document.getElementById("settingsMsg");
+    msg.textContent = "";
+
+    if (newName.length < 3) {
+      msg.textContent = "Neuer Name muss mindestens 3 Zeichen haben.";
+      return;
+    }
+    if (users[newName]) {
+      msg.textContent = "Name ist schon vergeben.";
+      return;
+    }
+    if (users[currentUser].pass !== oldPass) {
+      msg.textContent = "Altes Passwort falsch.";
+      return;
     }
 
-    function showGame() {
-      document.getElementById("loginBox").style.display = "none";
-      document.getElementById("cookie").style.display = "block";
-      document.getElementById("scoreBox").style.display = "block";
-      document.getElementById("logoutBtn").style.display = "inline-block";
-      document.getElementById("settingsBtn").style.display = "inline-block";
-      currentUser = localStorage.getItem("currentUser");
-      score = users[currentUser].score || 0;
-      document.getElementById("score").innerText = score;
-      updateLeaderboard();
+    // Daten übertragen
+    users[newName] = {...users[currentUser]};
+    delete users[currentUser];
+    currentUser = newName;
+    localStorage.setItem("currentUser", currentUser);
+    saveUsers();
+
+    document.getElementById("userNameDisplay").textContent = currentUser;
+    msg.textContent = "Name erfolgreich geändert!";
+    // Felder leeren
+    document.getElementById("newName").value = "";
+    document.getElementById("oldPassForName").value = "";
+    updateLeaderboard();
+  }
+
+  // Passwort ändern
+  function changePassword() {
+    let oldPass = document.getElementById("oldPassForPass").value.trim();
+    let newPass = document.getElementById("newPass").value.trim();
+    let msg = document.getElementById("settingsMsg");
+    msg.textContent = "";
+
+    if (newPass.length < 3) {
+      msg.textContent = "Neues Passwort muss mindestens 3 Zeichen haben.";
+      return;
+    }
+    if (users[currentUser].pass !== oldPass) {
+      msg.textContent = "Altes Passwort falsch.";
+      return;
     }
 
-    function clickCookie() {
-      score++;
-      users[currentUser].score = score;
-      localStorage.setItem("users", JSON.stringify(users));
-      document.getElementById("score").innerText = score;
-      updateLeaderboard();
-    }
+    users[currentUser].pass = newPass;
+    saveUsers();
+    msg.textContent = "Passwort erfolgreich geändert!";
+    document.getElementById("oldPassForPass").value = "";
+    document.getElementById("newPass").value = "";
+  }
 
-    function updateLeaderboard() {
-      const sorted = Object.entries(users).sort((a, b) => b[1].score - a[1].score).slice(0, 10);
-      document.getElementById("leaderboard").innerHTML = sorted.map((u, i) => `<li>#${i+1} ${u[0]}: ${u[1].score}</li>`).join("");
-    }
+  // Geschwindigkeits-Update (optional)
+  function startSpeedIncrease() {
+    stopSpeedIncrease();
+    speed = 1.0;
+    speedUpdateTimer = setInterval(() => {
+      speed += 0.05;
+      document.getElementById("speedDisplay").textContent = "Geschwindigkeit: " + speed.toFixed(2) + "x";
+    }, 2000);
+  }
+  function stopSpeedIncrease() {
+    clearInterval(speedUpdateTimer);
+  }
 
-    function openSettings() {
-      const oldPw = prompt("Altes Passwort eingeben:");
-      if (oldPw !== users[currentUser].password) return alert("Falsches Passwort!");
-      const newName = prompt("Neuer Name:", currentUser);
-      const newPw = prompt("Neues Passwort:");
-      if (!newName || !newPw) return;
-      if (users[newName] && newName !== currentUser) return alert("Name bereits vergeben!");
-      users[newName] = { password: newPw, score: score };
-      delete users[currentUser];
-      localStorage.setItem("users", JSON.stringify(users));
-      localStorage.setItem("currentUser", newName);
-      currentUser = newName;
-      alert("Name und Passwort geändert!");
-      updateLeaderboard();
-    }
+  // Auto-login, wenn User noch im localStorage
+  if(currentUser && users[currentUser]) {
+    handleLogin();
+  }
+</script>
 
-    if (currentUser && users[currentUser]) {
-      showGame();
-    }
-  </script>
 </body>
 </html>

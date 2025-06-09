@@ -1,109 +1,161 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Farmsucht</title>
-  <link href="https://fonts.cdnfonts.com/css/minecraft-4" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🌾 Farmsucht Minecraft Server</title>
   <style>
     body {
       margin: 0;
-      font-family: 'Minecraft', sans-serif;
+      padding: 0;
+      font-family: 'Minecraftia', monospace;
       background: linear-gradient(to bottom right, #a8e063, #56ab2f);
-      color: white;
-      text-align: center;
+      color: #222;
+      overflow: hidden;
     }
-    header {
-      padding: 30px;
-      background: #2e7d32;
-      font-size: 2em;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    h1, h2, h3, p {
+      text-align: center;
+      margin: 10px;
     }
     .container {
+      max-width: 800px;
+      margin: auto;
       padding: 20px;
+      background: #e8f5e9;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.2);
     }
-    .info-buttons {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 15px;
-      margin-top: 20px;
-    }
-    .info-buttons a {
-      background: #4caf50;
-      padding: 10px 20px;
-      border-radius: 10px;
+    .button {
+      display: inline-block;
+      background: #34a853;
       color: white;
+      padding: 10px 20px;
+      margin: 10px;
       text-decoration: none;
-      font-size: 1.2em;
-      box-shadow: 2px 2px 8px rgba(0,0,0,0.4);
+      border-radius: 10px;
+      font-weight: bold;
     }
-    .counter {
+    #gameCanvas {
+      display: block;
+      margin: 20px auto;
+      background: #dcedc8;
+      border: 3px solid #388e3c;
+    }
+    #counter {
       position: fixed;
       bottom: 10px;
       right: 10px;
     }
-    canvas {
-      margin-top: 40px;
-      background: #1b5e20;
-      border: 3px solid #ffffff;
-    }
   </style>
 </head>
 <body>
-  <header>🌾 Farmsucht Minecraft Server 🌾</header>
   <div class="container">
-    <p>Willkommen auf unserer offiziellen Website!</p>
-    <p><strong>IP:</strong> farmsucht.eu | <strong>Version:</strong> 1.21.4 | <strong>Modus:</strong> Citybuild</p>
+    <h1>🌾 Farmsucht Minecraft Server 🌾</h1>
+    <h2>IP: farmsucht.eu | Version: 1.21.4 | Modus: Citybuild</h2>
 
-    <canvas id="clickGame" width="300" height="200"></canvas>
-    <p><strong>Punkte:</strong> <span id="score">0</span></p>
-    <button onclick="resetGame()">Neustarten</button>
+    <canvas id="gameCanvas" width="600" height="200"></canvas>
+    <h3>Punkte: <span id="score">0</span> | Geschwindigkeit: <span id="speed">1x</span></h3>
+    <button onclick="restartGame()" class="button">Neustarten</button>
 
-    <div class="info-buttons">
-      <a href="https://dsc.gg/farmsucht" target="_blank">🔗 Discord: dsc.gg/farmsucht</a>
-      <a href="https://youtube.com/@zaa_ay" target="_blank">▶️ YouTube: zaa_ay</a>
+    <div style="text-align: center;">
+      <a href="https://dsc.gg/farmsucht" class="button">🔗 Discord: dsc.gg/farmsucht</a>
+      <a href="https://youtube.com/@zaa_ay" class="button">▶️ YouTube: zaa_ay</a>
     </div>
   </div>
 
-  <div class="counter">
-    <script type="text/javascript" src="https://www.freevisitorcounters.com/auth.php?id=ed0269d4f07f8324e1f49abeed46ba120c3c7da7"></script>
+  <div id="counter">
+    <script type='text/javascript' src='https://www.freevisitorcounters.com/auth.php?id=ed0269d4f07f8324e1f49abeed46ba120c3c7da7'></script>
     <script type="text/javascript" src="https://www.freevisitorcounters.com/en/home/counter/1349906/t/1"></script>
   </div>
 
   <script>
-    const canvas = document.getElementById('clickGame');
-    const ctx = canvas.getContext('2d');
-    let score = 0;
-    let target = { x: 100, y: 50, size: 30 };
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
 
-    function drawTarget() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = '#ffeb3b';
-      ctx.fillRect(target.x, target.y, target.size, target.size);
+    let score = 0;
+    let speed = 1;
+    let running = true;
+
+    const player = {
+      x: 50,
+      y: 150,
+      w: 20,
+      h: 20,
+      vy: 0,
+      jumping: false
+    };
+
+    const blocks = [];
+    function spawnBlock() {
+      blocks.push({ x: canvas.width, y: 160, w: 20, h: 20 });
     }
 
-    canvas.addEventListener('click', function(event) {
-      const rect = canvas.getBoundingClientRect();
-      const x = event.clientX - rect.left;
-      const y = event.clientY - rect.top;
+    function update() {
+      if (!running) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      if (x >= target.x && x <= target.x + target.size && y >= target.y && y <= target.y + target.size) {
-        score++;
-        document.getElementById('score').innerText = score;
-        target.x = Math.random() * (canvas.width - target.size);
-        target.y = Math.random() * (canvas.height - target.size);
-        drawTarget();
+      // Player Gravity
+      player.vy += 1;
+      player.y += player.vy;
+      if (player.y > 150) {
+        player.y = 150;
+        player.vy = 0;
+        player.jumping = false;
+      }
+
+      // Draw Player
+      ctx.fillStyle = "#4caf50";
+      ctx.fillRect(player.x, player.y, player.w, player.h);
+
+      // Update & draw blocks
+      for (let i = 0; i < blocks.length; i++) {
+        blocks[i].x -= speed * 2;
+        ctx.fillStyle = "#8d6e63";
+        ctx.fillRect(blocks[i].x, blocks[i].y, blocks[i].w, blocks[i].h);
+
+        if (blocks[i].x < -20) {
+          blocks.splice(i, 1);
+          score++;
+          speed = 1 + score / 10;
+        }
+
+        // Collision
+        if (
+          player.x < blocks[i].x + blocks[i].w &&
+          player.x + player.w > blocks[i].x &&
+          player.y < blocks[i].y + blocks[i].h &&
+          player.y + player.h > blocks[i].y
+        ) {
+          running = false;
+          alert("Game Over! Punkte: " + score);
+        }
+      }
+
+      document.getElementById("score").innerText = score;
+      document.getElementById("speed").innerText = speed.toFixed(1) + "x";
+
+      requestAnimationFrame(update);
+    }
+
+    document.addEventListener("keydown", (e) => {
+      if (e.code === "Space" && !player.jumping) {
+        player.vy = -15;
+        player.jumping = true;
       }
     });
 
-    function resetGame() {
+    function restartGame() {
       score = 0;
-      document.getElementById('score').innerText = score;
-      drawTarget();
+      speed = 1;
+      blocks.length = 0;
+      player.y = 150;
+      player.vy = 0;
+      running = true;
+      update();
     }
 
-    drawTarget();
+    setInterval(spawnBlock, 1500);
+    update();
   </script>
 </body>
 </html>

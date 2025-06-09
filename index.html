@@ -2,72 +2,67 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Farmsucht</title>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   <style>
     body {
-      margin:0;
-      font-family:'Press Start 2P',monospace;
-      background:#227722;
-      color:#eee;
-      text-align:center;
-      overflow:hidden;
+      margin: 0;
+      font-family: 'Press Start 2P', monospace;
+      background: linear-gradient(to bottom, #77dd77, #44aa44);
+      color: #fff;
+      text-align: center;
+      overflow: hidden;
     }
     header {
-      padding:20px;
-      font-size:2rem;
-      text-shadow:2px 2px 0 #000;
-      background:#115511;
+      font-size: 2rem;
+      padding: 1rem;
+      background: #228822;
+      box-shadow: 0 4px 0 #115511;
     }
     canvas {
-      margin:20px auto;
-      background:#99cc99;
-      display:block;
-      width:80vw;
-      max-width:800px;
-      height:200px;
-      border:4px solid #000;
+      background: #99cc99;
+      border: 4px solid #222;
+      display: block;
+      margin: 1rem auto;
     }
-    #controls {
-      margin:10px;
+    #info, #rankings, #footer, #visitor {
+      background: rgba(0,0,0,0.5);
+      padding: 0.5rem;
+      border-radius: 0.5rem;
+      font-size: 0.7rem;
+      position: absolute;
+    }
+    #info {
+      top: 10px; left: 10px;
+    }
+    #rankings {
+      top: 10px; right: 10px;
+      text-align: left;
+    }
+    #footer {
+      bottom: 10px; left: 10px;
+      text-align: left;
+    }
+    #visitor {
+      bottom: 10px; right: 10px;
     }
     .btn {
-      background:#335533;
-      color:#eee;
-      padding:8px 16px;
-      margin:5px;
-      border:none;
-      cursor:pointer;
-      font-family:'Press Start 2P',monospace;
-      text-shadow:1px 1px 0 #000;
+      font-family: 'Press Start 2P', monospace;
+      padding: 0.5rem 1rem;
+      background: #336633;
+      color: white;
+      border: none;
+      cursor: pointer;
+      margin: 1rem;
     }
-    #info,#footer,#rankings,#visitor {
-      background:rgba(0,0,0,0.5);
-      padding:8px;
-      margin:5px;
-      border-radius:8px;
-      display:inline-block;
-    }
-    #info,#rankings {
-      position:fixed; top:10px;
-    }
-    #info {left:10px;}
-    #rankings {right:10px;}
-    #footer,#visitor {position:fixed; bottom:10px;}
-    #footer{left:10px;}
-    #visitor{right:10px;}
   </style>
 </head>
 <body>
 
 <header>FARMSUCHT</header>
-
-<canvas id="game"></canvas>
-
-<div id="controls">
-  <button class="btn" id="pauseBtn">Pause</button>
-</div>
+<canvas id="game" width="800" height="200"></canvas>
+<button class="btn" id="pauseBtn">Pause</button>
 
 <div id="info">
   Punkte: <span id="score">0</span><br>
@@ -75,104 +70,133 @@
 </div>
 
 <div id="rankings">
-  <b>Top Scores</b><br>
+  <b>Top Scores</b>
   <ol id="highscores"></ol>
 </div>
 
 <div id="footer">
-  Discord: <a href="https://dsc.gg/farmsucht" style="color:#eee;">zaa_ay</a><br>
+  Discord: <a href="https://dsc.gg/farmsucht" style="color: white;">zaa_ay</a><br>
   YouTube: zaa_ay<br>
   Server-IP: farmsucht.eu<br>
   Minecraft 1.21.4 Citybuild
 </div>
 
 <div id="visitor">
-  <script src="https://www.freevisitorcounters.com/auth.php?id=ed0269d4f07f8324e1f49abeed46ba120c3c7da120c3c7da7"></script>
+  <script src="https://www.freevisitorcounters.com/auth.php?id=ed0269d4f07f8324e1f49abeed46ba120c3c7da7"></script>
   <script src="https://www.freevisitorcounters.com/en/home/counter/1349906/t/1"></script>
 </div>
 
 <script>
-// Assets encoded in data-URI
-const steveImg = new Image();
-steveImg.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAAAwCAYAAADE0/F6AAA..."; // truncated
-const cactusImg = new Image();
-cactusImg.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAyCAYAAADpr1XrAAA..."; // truncated
-
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
-canvas.width = Math.min(window.innerWidth*0.8,800);
-canvas.height = 200;
 
-let player = {x:50,y:150,width:40,height:40,dy:0,jumping:false};
+let player = { x: 50, y: 150, width: 40, height: 40, dy: 0, jumping: false };
+let gravity = 1.2;
+let score = 0;
+let speed = 3;
 let obstacles = [];
-let gravity=1.2, score=0, speed=3;
-let highScores=[], paused=false;
+let paused = false;
+let highScores = [];
 
-function draw() {
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  ctx.drawImage(steveImg,player.x,player.y,player.width,player.height);
-  obstacles.forEach(o=>ctx.drawImage(cactusImg,o.x,o.y,o.width,o.height));
+function drawPlayer() {
+  ctx.fillStyle = "#000";
+  ctx.fillRect(player.x, player.y, player.width, player.height);
 }
 
-function update() {
+function drawObstacles() {
+  ctx.fillStyle = "#228822";
+  for (let obs of obstacles) {
+    ctx.fillRect(obs.x, obs.y, obs.width, obs.height);
+  }
+}
+
+function drawGame() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawPlayer();
+  drawObstacles();
+}
+
+function updateGame() {
   if (paused) return;
-  // Player
-  player.y+=player.dy; player.dy+=gravity;
-  if (player.y>=150) { player.y=150; player.jumping=false;}
+  player.y += player.dy;
+  player.dy += gravity;
+  if (player.y > 150) {
+    player.y = 150;
+    player.jumping = false;
+  }
+  if (Math.random() < 0.015) {
+    obstacles.push({ x: canvas.width, y: 150, width: 30, height: 40 });
+  }
+  for (let obs of obstacles) {
+    obs.x -= speed;
+  }
+  obstacles = obstacles.filter(o => o.x + o.width > 0);
 
-  // Obstacles
-  if (Math.random()<0.015) obstacles.push({x:canvas.width,y:150,width:40,height:40});
-  obstacles.forEach(o=>o.x-=speed);
-  obstacles=obstacles.filter(o=>o.x+o.width>0);
+  for (let obs of obstacles) {
+    if (
+      player.x < obs.x + obs.width &&
+      player.x + player.width > obs.x &&
+      player.y < obs.y + obs.height &&
+      player.y + player.height > obs.y
+    ) {
+      gameOver();
+    }
+  }
 
-  // Collision
-  let hit=obstacles.some(o=>
-     player.x<o.x+o.width && player.x+player.width>o.x &&
-     player.y<o.y+o.height && player.y+player.height>o.y
-  );
-  if (hit) gameOver();
-
-  // Score
   score++;
-  if(score%200===0) speed++;
-  document.getElementById("score").innerText=score;
-  document.getElementById("speed").innerText=speed;
+  if (score % 200 === 0) speed++;
+  document.getElementById("score").innerText = score;
+  document.getElementById("speed").innerText = speed;
 }
 
-function gameOver(){
-  paused=true;
+function jump() {
+  if (!player.jumping) {
+    player.dy = -18;
+    player.jumping = true;
+  }
+}
+
+function gameOver() {
+  paused = true;
   highScores.push(score);
-  highScores.sort((a,b)=>b-a); highScores=highScores.slice(0,5);
-  updateRankings();
-  setTimeout(()=>alert("Game Over! Punkte: "+score),10);
+  highScores.sort((a, b) => b - a);
+  highScores = highScores.slice(0, 5);
+  updateRanking();
+  alert("Game Over! Punkte: " + score);
 }
 
-function updateRankings(){
-  const list=document.getElementById("highscores");
-  list.innerHTML="";
-  highScores.forEach(s=>{ let li=document.createElement("li"); li.innerText=s; list.appendChild(li);});
+function updateRanking() {
+  const list = document.getElementById("highscores");
+  list.innerHTML = "";
+  for (let s of highScores) {
+    const li = document.createElement("li");
+    li.innerText = s;
+    list.appendChild(li);
+  }
 }
 
-function loop(){
-  update(); draw();
+function loop() {
+  updateGame();
+  drawGame();
   requestAnimationFrame(loop);
 }
 
 loop();
 
-window.addEventListener("keydown",e=>{
-  if(e.code==="Space"){
+window.addEventListener("keydown", e => {
+  if (e.code === "Space") {
     if (!paused) jump();
   }
 });
-document.getElementById("pauseBtn").onclick = ()=>{paused=!paused; document.getElementById("pauseBtn").innerText=paused?"Weiter":"Pause";};
-document.getElementById("game").addEventListener("click", ()=>{
+
+canvas.addEventListener("click", () => {
   if (!paused) jump();
 });
 
-function jump(){
-  if(!player.jumping){player.dy=-18;player.jumping=true;}
-}
+document.getElementById("pauseBtn").addEventListener("click", () => {
+  paused = !paused;
+  document.getElementById("pauseBtn").innerText = paused ? "Weiter" : "Pause";
+});
 </script>
 
 </body>

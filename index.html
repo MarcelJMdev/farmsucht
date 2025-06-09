@@ -2,228 +2,213 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <title>Farmsucht - Minecraft Citybuild</title>
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FarmSucht Dino Game</title>
   <style>
     body {
       margin: 0;
-      font-family: 'Press Start 2P', monospace;
-      background: linear-gradient(to bottom, #5e9c36, #2d4825);
-      color: #fff;
-      text-align: center;
-      overflow-x: hidden;
+      font-family: "Segoe UI", sans-serif;
+      background: linear-gradient(to bottom, #b3e5fc, #81d4fa);
+      color: #222;
+      overflow: hidden;
     }
 
-    header {
-      font-size: 2.5rem;
-      padding: 20px;
-      background-color: #1d2b1f;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-      text-shadow: 2px 2px 0 #000;
+    canvas {
+      display: block;
+      margin: auto;
+      background: url('https://i.imgur.com/JvRg8nP.png') repeat-x;
+      background-size: contain;
+      border: 4px solid #333;
+      border-radius: 16px;
     }
 
-    main {
-      padding: 30px 20px;
-    }
-
-    h2 {
-      margin-top: 10px;
-      color: #afff9f;
-      text-shadow: 1px 1px #000;
-    }
-
-    .game-container {
-      margin: 30px auto;
-      width: 600px;
-      height: 200px;
-      background: url('https://i.imgur.com/KT8Iuvc.png') repeat-x center;
-      background-size: cover;
-      position: relative;
-      border: 5px solid #000;
-      box-shadow: 0 0 20px #000;
-    }
-
-    #steve {
-      position: absolute;
-      bottom: 10px;
-      left: 50px;
-      width: 60px;
-      height: 60px;
-      background: url('https://i.imgur.com/Z4zB7vZ.png') center/contain no-repeat;
-    }
-
-    #cactus {
-      position: absolute;
-      bottom: 10px;
-      right: -40px;
-      width: 40px;
-      height: 60px;
-      background: url('https://i.imgur.com/7KECwvk.png') center/contain no-repeat;
-      animation: cactus-move 2.5s linear infinite;
-    }
-
-    #score {
-      position: absolute;
-      top: 8px;
+    #info {
+      position: fixed;
+      top: 10px;
       left: 10px;
-      color: #fff;
-      font-size: 14px;
-      text-shadow: 1px 1px 0 #000;
+      font-size: 18px;
+      background: rgba(255, 255, 255, 0.8);
+      padding: 10px;
+      border-radius: 12px;
     }
 
-    .jump {
-      animation: jump 0.6s ease;
-    }
-
-    @keyframes jump {
-      0%, 100% { bottom: 10px; }
-      50% { bottom: 90px; }
-    }
-
-    @keyframes cactus-move {
-      0% { right: -60px; }
-      100% { right: 700px; }
-    }
-
-    .instructions {
-      margin-top: 10px;
-      font-size: 12px;
-      color: #ffffb0;
-      text-shadow: 1px 1px 0 #000;
-    }
-
-    footer {
-      margin-top: 30px;
-    }
-
-    .button {
-      display: inline-block;
-      background: #3b6e22;
-      color: #fff;
-      padding: 10px 20px;
-      margin: 8px;
+    #footer {
+      position: fixed;
+      bottom: 10px;
+      left: 10px;
+      font-size: 16px;
+      background: rgba(255,255,255,0.9);
+      padding: 10px;
       border-radius: 10px;
-      font-weight: bold;
-      text-decoration: none;
-      box-shadow: 2px 2px 0 #000;
     }
 
-    .button:hover {
-      background: #4fa836;
-    }
-
-    .server-info {
-      margin-top: 15px;
-      color: #c2ffb6;
-      text-shadow: 1px 1px 0 #000;
-    }
-
-    .counter-fixed {
+    #visitor {
       position: fixed;
       bottom: 10px;
       right: 10px;
-      background: rgba(0,0,0,0.6);
+    }
+
+    .rankings {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background: rgba(255,255,255,0.8);
       padding: 10px;
-      border-radius: 10px;
-      font-size: 12px;
-      color: #fff;
-      z-index: 1000;
-      text-align: center;
+      border-radius: 12px;
+      font-size: 14px;
+      max-width: 200px;
     }
   </style>
 </head>
 <body>
 
-  <header>FARMSUCHT.eu</header>
+<div id="info">
+  <strong>Mit Leertaste springen</strong><br>
+  Punkte: <span id="score">0</span><br>
+  Speed: <span id="speed">1</span>x
+</div>
 
-  <main>
-    <h2>Minecraft 1.21.4 Citybuild Server</h2>
+<div class="rankings">
+  <strong>Rangliste</strong>
+  <ol id="highscores">
+    <!-- Dynamisch gefüllt -->
+  </ol>
+</div>
 
-    <div class="game-container" id="game-container">
-      <div id="steve"></div>
-      <div id="cactus"></div>
-      <div id="score">Punkte: 0</div>
-    </div>
+<canvas id="game" width="800" height="300"></canvas>
 
-    <div class="instructions">
-      Mit Leertaste oder Klick springen!<br />
-      💥 Das Dino-Game bockt!
-    </div>
+<div id="footer">
+  Discord: <a href="https://dsc.gg/farmsucht" target="_blank">dsc.gg/farmsucht</a><br>
+  YouTube: zaa_ay<br>
+  Server-IP: farmsucht.eu<br>
+  Version: Minecraft 1.21.4 Citybuild
+</div>
 
-    <footer>
-      <a class="button" href="https://dsc.gg/farmsucht" target="_blank">Discord: dsc.gg/farmsucht</a>
-      <a class="button" href="https://youtube.com/@zaa_ay" target="_blank">YouTube: zaa_ay</a>
-      <div class="server-info">
-        IP: <strong>farmsucht.eu</strong>
-      </div>
-    </footer>
-  </main>
+<div id="visitor">
+  <script type='text/javascript' src='https://www.freevisitorcounters.com/auth.php?id=ed0269d4f07f8324e1f49abeed46ba120c3c7da7'></script>
+  <script type="text/javascript" src="https://www.freevisitorcounters.com/en/home/counter/1349906/t/1"></script>
+</div>
 
-  <div class="counter-fixed">
-    Besuche:<br />
-    <script type="text/javascript" src="https://www.freevisitorcounters.com/auth.php?id=ed0269d4f07f8324e1f49abeed46ba120c3c7da7"></script>
-    <script type="text/javascript" src="https://www.freevisitorcounters.com/en/home/counter/1349906/t/1"></script>
-  </div>
+<script>
+  const canvas = document.getElementById("game");
+  const ctx = canvas.getContext("2d");
 
-  <script>
-    const steve = document.getElementById('steve');
-    const cactus = document.getElementById('cactus');
-    const scoreDisplay = document.getElementById('score');
-    const gameContainer = document.getElementById('game-container');
+  let player = { x: 50, y: 220, width: 40, height: 40, dy: 0, jumping: false };
+  let obstacles = [];
+  let gravity = 1.5;
+  let score = 0;
+  let speed = 4;
+  let gameSpeed = 1;
+  let highScores = [];
 
-    let score = 0;
-    let jumping = false;
-    let gameOver = false;
+  const playerImg = new Image();
+  playerImg.src = "https://i.imgur.com/MZxiwWx.png"; // Minecraft Steve
+  const blockImg = new Image();
+  blockImg.src = "https://i.imgur.com/WyICJBG.png"; // Minecraft Block
 
-    function jump() {
-      if (jumping || gameOver) return;
-      jumping = true;
-      steve.classList.add('jump');
-      setTimeout(() => {
-        steve.classList.remove('jump');
-        jumping = false;
-      }, 600);
-    }
+  function drawPlayer() {
+    ctx.drawImage(playerImg, player.x, player.y, player.width, player.height);
+  }
 
-    function checkCollision() {
-      const steveBox = steve.getBoundingClientRect();
-      const cactusBox = cactus.getBoundingClientRect();
-      return !(
-        steveBox.top > cactusBox.bottom ||
-        steveBox.bottom < cactusBox.top ||
-        steveBox.right < cactusBox.left ||
-        steveBox.left > cactusBox.right
-      );
-    }
-
-    function gameLoop() {
-      if (checkCollision()) {
-        gameOver = true;
-        cactus.style.animationPlayState = 'paused';
-        alert("Game Over! Deine Punkte: " + score);
-        score = 0;
-        cactus.style.animationPlayState = 'running';
-        scoreDisplay.textContent = "Punkte: 0";
-        gameOver = false;
-      } else {
-        score++;
-        scoreDisplay.textContent = "Punkte: " + score;
-      }
-    }
-
-    setInterval(gameLoop, 1200);
-
-    window.addEventListener('keydown', e => {
-      if (e.code === 'Space') {
-        e.preventDefault();
-        jump();
-      }
+  function drawObstacles() {
+    ctx.fillStyle = "#8d6e63";
+    obstacles.forEach(ob => {
+      ctx.drawImage(blockImg, ob.x, ob.y, ob.width, ob.height);
     });
+  }
 
-    gameContainer.addEventListener('click', () => {
-      jump();
+  function updateObstacles() {
+    if (Math.random() < 0.02) {
+      obstacles.push({ x: canvas.width, y: 220, width: 40, height: 40 });
+    }
+    obstacles.forEach(ob => ob.x -= speed);
+    obstacles = obstacles.filter(ob => ob.x + ob.width > 0);
+  }
+
+  function jump() {
+    if (!player.jumping) {
+      player.dy = -18;
+      player.jumping = true;
+    }
+  }
+
+  function updatePlayer() {
+    player.y += player.dy;
+    player.dy += gravity;
+    if (player.y >= 220) {
+      player.y = 220;
+      player.jumping = false;
+    }
+  }
+
+  function detectCollision() {
+    return obstacles.some(ob =>
+      player.x < ob.x + ob.width &&
+      player.x + player.width > ob.x &&
+      player.y < ob.y + ob.height &&
+      player.y + player.height > ob.y
+    );
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawPlayer();
+    drawObstacles();
+  }
+
+  function update() {
+    updatePlayer();
+    updateObstacles();
+    if (detectCollision()) {
+      gameOver();
+      return;
+    }
+    score++;
+    if (score % 100 === 0) speed++; // Speed erhöhen
+    document.getElementById("score").textContent = score;
+    document.getElementById("speed").textContent = speed;
+  }
+
+  function gameOver() {
+    highScores.push(score);
+    highScores.sort((a, b) => b - a);
+    highScores = highScores.slice(0, 5);
+    updateRankings();
+    alert("Game Over! Punktestand: " + score);
+    resetGame();
+  }
+
+  function resetGame() {
+    obstacles = [];
+    score = 0;
+    speed = 4;
+    player.y = 220;
+    player.dy = 0;
+    player.jumping = false;
+  }
+
+  function updateRankings() {
+    const list = document.getElementById("highscores");
+    list.innerHTML = "";
+    highScores.forEach((s, i) => {
+      const item = document.createElement("li");
+      item.textContent = s + " Punkte";
+      list.appendChild(item);
     });
-  </script>
+  }
+
+  function loop() {
+    update();
+    draw();
+    requestAnimationFrame(loop);
+  }
+
+  document.addEventListener("keydown", (e) => {
+    if (e.code === "Space") jump();
+  });
+
+  loop();
+</script>
 
 </body>
 </html>

@@ -2,202 +2,108 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Farmsucht</title>
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/minecraft-4" rel="stylesheet">
   <style>
     body {
       margin: 0;
-      font-family: 'Press Start 2P', monospace;
-      background: linear-gradient(to bottom, #77dd77, #44aa44);
-      color: #fff;
+      font-family: 'Minecraft', sans-serif;
+      background: linear-gradient(to bottom right, #a8e063, #56ab2f);
+      color: white;
       text-align: center;
-      overflow: hidden;
     }
     header {
-      font-size: 2rem;
-      padding: 1rem;
-      background: #228822;
-      box-shadow: 0 4px 0 #115511;
+      padding: 30px;
+      background: #2e7d32;
+      font-size: 2em;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
+    .container {
+      padding: 20px;
+    }
+    .info-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 20px;
+    }
+    .info-buttons a {
+      background: #4caf50;
+      padding: 10px 20px;
+      border-radius: 10px;
+      color: white;
+      text-decoration: none;
+      font-size: 1.2em;
+      box-shadow: 2px 2px 8px rgba(0,0,0,0.4);
+    }
+    .counter {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
     }
     canvas {
-      background: #99cc99;
-      border: 4px solid #222;
-      display: block;
-      margin: 1rem auto;
-    }
-    #info, #rankings, #footer, #visitor {
-      background: rgba(0,0,0,0.5);
-      padding: 0.5rem;
-      border-radius: 0.5rem;
-      font-size: 0.7rem;
-      position: absolute;
-    }
-    #info {
-      top: 10px; left: 10px;
-    }
-    #rankings {
-      top: 10px; right: 10px;
-      text-align: left;
-    }
-    #footer {
-      bottom: 10px; left: 10px;
-      text-align: left;
-    }
-    #visitor {
-      bottom: 10px; right: 10px;
-    }
-    .btn {
-      font-family: 'Press Start 2P', monospace;
-      padding: 0.5rem 1rem;
-      background: #336633;
-      color: white;
-      border: none;
-      cursor: pointer;
-      margin: 1rem;
+      margin-top: 40px;
+      background: #1b5e20;
+      border: 3px solid #ffffff;
     }
   </style>
 </head>
 <body>
+  <header>🌾 Farmsucht Minecraft Server 🌾</header>
+  <div class="container">
+    <p>Willkommen auf unserer offiziellen Website!</p>
+    <p><strong>IP:</strong> farmsucht.eu | <strong>Version:</strong> 1.21.4 | <strong>Modus:</strong> Citybuild</p>
 
-<header>FARMSUCHT</header>
-<canvas id="game" width="800" height="200"></canvas>
-<button class="btn" id="pauseBtn">Pause</button>
+    <canvas id="clickGame" width="300" height="200"></canvas>
+    <p><strong>Punkte:</strong> <span id="score">0</span></p>
+    <button onclick="resetGame()">Neustarten</button>
 
-<div id="info">
-  Punkte: <span id="score">0</span><br>
-  Speed: <span id="speed">1</span>x
-</div>
+    <div class="info-buttons">
+      <a href="https://dsc.gg/farmsucht" target="_blank">🔗 Discord: dsc.gg/farmsucht</a>
+      <a href="https://youtube.com/@zaa_ay" target="_blank">▶️ YouTube: zaa_ay</a>
+    </div>
+  </div>
 
-<div id="rankings">
-  <b>Top Scores</b>
-  <ol id="highscores"></ol>
-</div>
+  <div class="counter">
+    <script type="text/javascript" src="https://www.freevisitorcounters.com/auth.php?id=ed0269d4f07f8324e1f49abeed46ba120c3c7da7"></script>
+    <script type="text/javascript" src="https://www.freevisitorcounters.com/en/home/counter/1349906/t/1"></script>
+  </div>
 
-<div id="footer">
-  Discord: <a href="https://dsc.gg/farmsucht" style="color: white;">zaa_ay</a><br>
-  YouTube: zaa_ay<br>
-  Server-IP: farmsucht.eu<br>
-  Minecraft 1.21.4 Citybuild
-</div>
+  <script>
+    const canvas = document.getElementById('clickGame');
+    const ctx = canvas.getContext('2d');
+    let score = 0;
+    let target = { x: 100, y: 50, size: 30 };
 
-<div id="visitor">
-  <script src="https://www.freevisitorcounters.com/auth.php?id=ed0269d4f07f8324e1f49abeed46ba120c3c7da7"></script>
-  <script src="https://www.freevisitorcounters.com/en/home/counter/1349906/t/1"></script>
-</div>
-
-<script>
-const canvas = document.getElementById("game");
-const ctx = canvas.getContext("2d");
-
-let player = { x: 50, y: 150, width: 40, height: 40, dy: 0, jumping: false };
-let gravity = 1.2;
-let score = 0;
-let speed = 3;
-let obstacles = [];
-let paused = false;
-let highScores = [];
-
-function drawPlayer() {
-  ctx.fillStyle = "#000";
-  ctx.fillRect(player.x, player.y, player.width, player.height);
-}
-
-function drawObstacles() {
-  ctx.fillStyle = "#228822";
-  for (let obs of obstacles) {
-    ctx.fillRect(obs.x, obs.y, obs.width, obs.height);
-  }
-}
-
-function drawGame() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  drawPlayer();
-  drawObstacles();
-}
-
-function updateGame() {
-  if (paused) return;
-  player.y += player.dy;
-  player.dy += gravity;
-  if (player.y > 150) {
-    player.y = 150;
-    player.jumping = false;
-  }
-  if (Math.random() < 0.015) {
-    obstacles.push({ x: canvas.width, y: 150, width: 30, height: 40 });
-  }
-  for (let obs of obstacles) {
-    obs.x -= speed;
-  }
-  obstacles = obstacles.filter(o => o.x + o.width > 0);
-
-  for (let obs of obstacles) {
-    if (
-      player.x < obs.x + obs.width &&
-      player.x + player.width > obs.x &&
-      player.y < obs.y + obs.height &&
-      player.y + player.height > obs.y
-    ) {
-      gameOver();
+    function drawTarget() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#ffeb3b';
+      ctx.fillRect(target.x, target.y, target.size, target.size);
     }
-  }
 
-  score++;
-  if (score % 200 === 0) speed++;
-  document.getElementById("score").innerText = score;
-  document.getElementById("speed").innerText = speed;
-}
+    canvas.addEventListener('click', function(event) {
+      const rect = canvas.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
 
-function jump() {
-  if (!player.jumping) {
-    player.dy = -18;
-    player.jumping = true;
-  }
-}
+      if (x >= target.x && x <= target.x + target.size && y >= target.y && y <= target.y + target.size) {
+        score++;
+        document.getElementById('score').innerText = score;
+        target.x = Math.random() * (canvas.width - target.size);
+        target.y = Math.random() * (canvas.height - target.size);
+        drawTarget();
+      }
+    });
 
-function gameOver() {
-  paused = true;
-  highScores.push(score);
-  highScores.sort((a, b) => b - a);
-  highScores = highScores.slice(0, 5);
-  updateRanking();
-  alert("Game Over! Punkte: " + score);
-}
+    function resetGame() {
+      score = 0;
+      document.getElementById('score').innerText = score;
+      drawTarget();
+    }
 
-function updateRanking() {
-  const list = document.getElementById("highscores");
-  list.innerHTML = "";
-  for (let s of highScores) {
-    const li = document.createElement("li");
-    li.innerText = s;
-    list.appendChild(li);
-  }
-}
-
-function loop() {
-  updateGame();
-  drawGame();
-  requestAnimationFrame(loop);
-}
-
-loop();
-
-window.addEventListener("keydown", e => {
-  if (e.code === "Space") {
-    if (!paused) jump();
-  }
-});
-
-canvas.addEventListener("click", () => {
-  if (!paused) jump();
-});
-
-document.getElementById("pauseBtn").addEventListener("click", () => {
-  paused = !paused;
-  document.getElementById("pauseBtn").innerText = paused ? "Weiter" : "Pause";
-});
-</script>
-
+    drawTarget();
+  </script>
 </body>
 </html>

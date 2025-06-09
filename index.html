@@ -8,52 +8,55 @@
     body {
       margin: 0;
       font-family: 'Minecraftia', monospace;
-      background: linear-gradient(to bottom right, #a8e063, #56ab2f);
+      background: linear-gradient(to bottom right, #c4f0a0, #79c869);
       color: #fff;
       text-align: center;
       overflow-x: hidden;
+      font-size: 1.2em;
     }
     h1 {
-      font-size: 2em;
+      font-size: 3em;
       margin-top: 20px;
       text-shadow: 2px 2px #000;
     }
     .info {
-      font-size: 1.2em;
+      font-size: 1.5em;
       margin: 10px;
       text-shadow: 1px 1px #000;
     }
     .cookie {
-      font-size: 5em;
+      font-size: 6em;
       cursor: pointer;
       transition: transform 0.1s;
       user-select: none;
+      width: fit-content;
+      margin: auto;
     }
     .cookie:active {
       transform: scale(0.95);
     }
     .score {
-      font-size: 1.5em;
+      font-size: 2em;
       margin: 10px;
       text-shadow: 1px 1px #000;
     }
     .footer {
-      margin-top: 30px;
-      font-size: 0.9em;
+      margin-top: 60px;
+      font-size: 1em;
       color: #ccc;
     }
-    .buttons a {
+    .buttons a, .buttons button {
       display: inline-block;
-      margin: 5px 10px;
-      padding: 10px 20px;
+      margin: 10px 15px;
+      padding: 12px 25px;
       background-color: #2e7d32;
       color: white;
-      border-radius: 10px;
+      border-radius: 12px;
       text-decoration: none;
       font-weight: bold;
-      box-shadow: 2px 2px 5px rgba(0,0,0,0.4);
+      box-shadow: 3px 3px 7px rgba(0,0,0,0.4);
     }
-    .buttons a:hover {
+    .buttons a:hover, .buttons button:hover {
       background-color: #1b5e20;
     }
     .leaderboard {
@@ -61,10 +64,10 @@
       top: 20px;
       right: 20px;
       background: rgba(0, 0, 0, 0.5);
-      padding: 10px;
+      padding: 15px;
       border-radius: 10px;
-      font-size: 0.9em;
-      max-width: 200px;
+      font-size: 1em;
+      max-width: 250px;
     }
     .counter {
       position: fixed;
@@ -79,6 +82,7 @@
       margin: 5px;
       border-radius: 5px;
       border: none;
+      font-size: 1em;
     }
     button {
       padding: 10px 20px;
@@ -88,6 +92,7 @@
       border-radius: 5px;
       cursor: pointer;
       font-weight: bold;
+      font-size: 1em;
     }
     button:hover {
       background-color: #2e7d32;
@@ -105,23 +110,24 @@
     <button onclick="login()">Login</button>
   </div>
 
-  <div class="cookie" onclick="clickCookie()" id="cookie" style="display:none">🍪</div>
   <div class="score" id="scoreBox" style="display:none">Punkte: <span id="score">0</span></div>
+  <div class="cookie" onclick="clickCookie()" id="cookie" style="display:none">🍪</div>
 
   <div class="buttons">
     <a href="https://dsc.gg/farmsucht" target="_blank">🔗 Discord</a>
     <a href="https://youtube.com/@zaa_ay" target="_blank">▶️ YouTube</a>
+    <button onclick="logout()" id="logoutBtn" style="display:none">🚪 Abmelden</button>
+    <button onclick="openSettings()" id="settingsBtn" style="display:none">⚙️ Einstellungen</button>
   </div>
 
   <div class="leaderboard">
     <strong>🏆 Rangliste</strong>
-    <ul id="leaderboard" style="list-style: none; padding-left: 0;"></ul>
+    <ol id="leaderboard" style="padding-left: 20px;"></ol>
   </div>
 
   <div class="footer">© 2025 Farmsucht – Programmiert von <strong>zaa_ay</strong></div>
 
   <div class="counter">
-    <a href='https://www.free-counters.org/'>https://www.Free-Counters.org</a>
     <script type='text/javascript' src='https://www.freevisitorcounters.com/auth.php?id=ed0269d4f07f8324e1f49abeed46ba120c3c7da7'></script>
     <script type="text/javascript" src="https://www.freevisitorcounters.com/en/home/counter/1349906/t/1"></script>
   </div>
@@ -129,52 +135,67 @@
   <script>
     let score = 0;
     let currentUser = localStorage.getItem("currentUser") || "";
+    let users = JSON.parse(localStorage.getItem("users")) || {};
 
     function login() {
-      const name = document.getElementById("username").value;
+      const name = document.getElementById("username").value.trim();
       const pw = document.getElementById("password").value;
       if (!name || !pw) return alert("Bitte alles ausfüllen!");
+      if (users[name] && users[name].password !== pw) return alert("Falsches Passwort!");
+      if (!users[name]) users[name] = { password: pw, score: 0 };
+      localStorage.setItem("users", JSON.stringify(users));
       localStorage.setItem("currentUser", name);
+      showGame();
+    }
+
+    function logout() {
+      localStorage.removeItem("currentUser");
+      location.reload();
+    }
+
+    function showGame() {
       document.getElementById("loginBox").style.display = "none";
       document.getElementById("cookie").style.display = "block";
       document.getElementById("scoreBox").style.display = "block";
-      loadScore();
-    }
-
-    function loadScore() {
+      document.getElementById("logoutBtn").style.display = "inline-block";
+      document.getElementById("settingsBtn").style.display = "inline-block";
       currentUser = localStorage.getItem("currentUser");
-      score = parseInt(localStorage.getItem(currentUser + "_score")) || 0;
+      score = users[currentUser].score || 0;
       document.getElementById("score").innerText = score;
       updateLeaderboard();
     }
 
     function clickCookie() {
       score++;
-      localStorage.setItem(currentUser + "_score", score);
+      users[currentUser].score = score;
+      localStorage.setItem("users", JSON.stringify(users));
       document.getElementById("score").innerText = score;
       updateLeaderboard();
     }
 
     function updateLeaderboard() {
-      let leaderboard = JSON.parse(localStorage.getItem("leaderboard")) || [];
-      const existing = leaderboard.find(l => l.name === currentUser);
-      if (existing) {
-        existing.score = Math.max(existing.score, score);
-      } else {
-        leaderboard.push({ name: currentUser, score });
-      }
-      leaderboard.sort((a, b) => b.score - a.score);
-      leaderboard = leaderboard.slice(0, 5);
-      localStorage.setItem("leaderboard", JSON.stringify(leaderboard));
-      const list = document.getElementById("leaderboard");
-      list.innerHTML = leaderboard.map(entry => `<li>${entry.name}: ${entry.score}</li>`).join("");
+      const sorted = Object.entries(users).sort((a, b) => b[1].score - a[1].score).slice(0, 10);
+      document.getElementById("leaderboard").innerHTML = sorted.map((u, i) => `<li>#${i+1} ${u[0]}: ${u[1].score}</li>`).join("");
     }
 
-    if (currentUser) {
-      document.getElementById("loginBox").style.display = "none";
-      document.getElementById("cookie").style.display = "block";
-      document.getElementById("scoreBox").style.display = "block";
-      loadScore();
+    function openSettings() {
+      const oldPw = prompt("Altes Passwort eingeben:");
+      if (oldPw !== users[currentUser].password) return alert("Falsches Passwort!");
+      const newName = prompt("Neuer Name:", currentUser);
+      const newPw = prompt("Neues Passwort:");
+      if (!newName || !newPw) return;
+      if (users[newName] && newName !== currentUser) return alert("Name bereits vergeben!");
+      users[newName] = { password: newPw, score: score };
+      delete users[currentUser];
+      localStorage.setItem("users", JSON.stringify(users));
+      localStorage.setItem("currentUser", newName);
+      currentUser = newName;
+      alert("Name und Passwort geändert!");
+      updateLeaderboard();
+    }
+
+    if (currentUser && users[currentUser]) {
+      showGame();
     }
   </script>
 </body>

@@ -80,7 +80,7 @@
     transform: translate(-50%, -50%);
     width: 120%;
     height: 120%;
-    background: radial-gradient(circle, rgba(0, 255, 136, 0.1) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(0, 255, 136, 0.05) 0%, transparent 70%);
     border-radius: 50%;
     z-index: -1;
   }
@@ -91,16 +91,16 @@
     font-weight: 900;
     color: var(--primary-green);
     text-shadow: 
+      0 0 5px var(--primary-green),
       0 0 10px var(--primary-green),
-      0 0 20px var(--primary-green),
-      0 0 30px var(--primary-green);
+      0 0 15px var(--primary-green);
     margin-bottom: 1rem;
     animation: pulse 2s ease-in-out infinite alternate;
   }
 
   @keyframes pulse {
-    from { text-shadow: 0 0 10px var(--primary-green), 0 0 20px var(--primary-green), 0 0 30px var(--primary-green); }
-    to { text-shadow: 0 0 20px var(--primary-green), 0 0 30px var(--primary-green), 0 0 40px var(--primary-green); }
+    from { text-shadow: 0 0 5px var(--primary-green), 0 0 10px var(--primary-green), 0 0 15px var(--primary-green); }
+    to { text-shadow: 0 0 10px var(--primary-green), 0 0 15px var(--primary-green), 0 0 20px var(--primary-green); }
   }
 
   .server-info {
@@ -237,6 +237,8 @@
     margin: 0.5rem;
     position: relative;
     overflow: hidden;
+    text-decoration: none;
+    display: inline-block;
   }
 
   .btn::before {
@@ -270,6 +272,16 @@
 
   .btn-secondary:hover {
     box-shadow: 0 8px 25px rgba(102, 102, 102, 0.4);
+  }
+
+  .btn-discord {
+    background: linear-gradient(135deg, #5865F2, #4752C4);
+    color: white;
+  }
+
+  .btn-youtube {
+    background: linear-gradient(135deg, #FF0000, #CC0000);
+    color: white;
   }
 
   /* Game Area */
@@ -457,6 +469,16 @@
   .hidden {
     display: none;
   }
+
+  .cookie-save-info {
+    background: rgba(0, 255, 136, 0.1);
+    border: 1px solid rgba(0, 255, 136, 0.3);
+    border-radius: 10px;
+    padding: 1rem;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+    color: var(--text-medium);
+  }
 </style>
 </head>
 <body>
@@ -482,9 +504,9 @@
         <div class="server-stat-value">Citybuild</div>
       </div>
       <div class="server-stat">
-        <div class="server-stat-icon">👥</div>
-        <div class="server-stat-label">Online</div>
-        <div class="server-stat-value" id="onlineCount">Loading...</div>
+        <div class="server-stat-icon">☕</div>
+        <div class="server-stat-label">Edition</div>
+        <div class="server-stat-value">Java Edition</div>
       </div>
     </div>
   </div>
@@ -562,7 +584,10 @@
   <div class="game-area">
     <button id="cookieBtn" class="cookie-btn" title="Klicke um Punkte zu sammeln!">🍪</button>
     <div class="score-display" id="scoreDisplay">Punkte: 0</div>
-    <div class="speed-display" id="speedDisplay">Multiplikator: 1.0x</div>
+    <div class="speed-display" id="speedDisplay">Multiplikator: 1.0x (wird nicht gespeichert)</div>
+    <div class="cookie-save-info">
+      💾 Deine Cookies werden automatisch gespeichert, aber der Multiplikator setzt sich nach jedem Login zurück!
+    </div>
     <div style="margin-top: 1rem; color: var(--text-medium); font-size: 0.9rem;">
       💡 Tipp: Je länger du spielst, desto schneller sammelst du Punkte!
     </div>
@@ -591,10 +616,12 @@
   <div style="color: var(--text-medium);">
     Programmiert mit ❤️ von zaa_ay
   </div>
-  <div style="margin-top: 1rem;">
-    <a href="#" style="color: var(--accent-gold); text-decoration: none; margin: 0 1rem;">Discord</a>
-    <a href="#" style="color: var(--accent-gold); text-decoration: none; margin: 0 1rem;">Forum</a>
-    <a href="#" style="color: var(--accent-gold); text-decoration: none; margin: 0 1rem;">Shop</a>
+  <div style="margin-top: 1rem; margin-bottom: 1rem;">
+    <a href="https://dsc.gg/farmsucht" target="_blank" class="btn btn-discord">📞 Discord</a>
+    <a href="https://www.youtube.com/@zaa_ay" target="_blank" class="btn btn-youtube">📺 YouTube (zaa_ay)</a>
+  </div>
+  <div style="color: var(--text-medium); font-size: 0.9rem;">
+    💬 Für Hilfe im Discord ein Ticket erstellen
   </div>
 </div>
 
@@ -613,7 +640,6 @@
   function init() {
     loadGameData();
     updateVisitorCounter();
-    simulateOnlineCount();
     if (gameState.currentUser && gameState.users[gameState.currentUser]) {
       autoLogin();
     }
@@ -630,13 +656,52 @@
 
   // Data persistence (using memory instead of localStorage)
   function loadGameData() {
-    // In a real application, this would load from a server
-    gameState.users = gameState.users || {};
+    // Load from memory storage (simulated database)
+    const saved = getCookie('farmsucht_game_data');
+    if (saved) {
+      try {
+        const data = JSON.parse(saved);
+        gameState.users = data.users || {};
+        gameState.currentUser = data.currentUser || null;
+        gameState.visitorCount = data.visitorCount || gameState.visitorCount;
+      } catch (e) {
+        console.log('Error loading saved data');
+      }
+    }
   }
 
   function saveGameData() {
-    // In a real application, this would save to a server
-    console.log('Game data saved:', gameState);
+    // Save to cookie (simulated database)
+    const dataToSave = {
+      users: gameState.users,
+      currentUser: gameState.currentUser,
+      visitorCount: gameState.visitorCount
+    };
+    setCookie('farmsucht_game_data', JSON.stringify(dataToSave), 365);
+  }
+
+  // Cookie functions for persistence
+  function setCookie(name, value, days) {
+    let d = new Date();
+    d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000));
+    let expires = "expires=" + d.toUTCString();
+    document.cookie = name + "=" + value + ";" + expires + ";path=/";
+  }
+
+  function getCookie(name) {
+    let cName = name + "=";
+    let decodedCookie = decodeURIComponent(document.cookie);
+    let ca = decodedCookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+      let c = ca[i];
+      while (c.charAt(0) == ' ') {
+        c = c.substring(1);
+      }
+      if (c.indexOf(cName) == 0) {
+        return c.substring(cName.length, c.length);
+      }
+    }
+    return "";
   }
 
   // Login/Register
@@ -665,11 +730,11 @@
         score: 0,
         joinDate: new Date().toISOString()
       };
-      saveGameData();
     }
 
     gameState.currentUser = name;
     gameState.score = gameState.users[name].score || 0;
+    saveGameData();
     
     showUserArea();
     startSpeedIncrease();
@@ -693,6 +758,7 @@
     gameState.score = 0;
     gameState.speed = 1.0;
     stopSpeedIncrease();
+    saveGameData();
     
     showLoginArea();
     updateDisplay();
@@ -755,154 +821,116 @@
     }
   }
 
-  // Settings
-  function changeName() {
-    const newName = document.getElementById('newName').value.trim();
-    const oldPass = document.getElementById('oldPassForName').value.trim();
-    const msgDiv = document.getElementById('settingsMsg');
-    
-    clearMessage(msgDiv);
+  // Settings Functions
+function changeName() {
+  const newName = document.getElementById('newName').value.trim();
+  const oldPass = document.getElementById('oldPassForName').value.trim();
+  const msgDiv = document.getElementById('settingsMsg');
+  
+  clearMessage(msgDiv);
 
-    if (newName.length < 3) {
-      showMessage(msgDiv, "❌ Neuer Name muss mindestens 3 Zeichen haben.", "error");
-      return;
-    }
-    
-    if (gameState.users[newName]) {
-      showMessage(msgDiv, "❌ Dieser Name ist bereits vergeben.", "error");
-      return;
-    }
-    
-    if (gameState.users[gameState.currentUser].pass !== oldPass) {
-      showMessage(msgDiv, "❌ Altes Passwort ist falsch.", "error");
-      return;
-    }
-
-    // Transfer data
-    gameState.users[newName] = {...gameState.users[gameState.currentUser]};
-    delete gameState.users[gameState.currentUser];
-    gameState.currentUser = newName;
-    saveGameData();
-
-    document.getElementById('userNameDisplay').textContent = newName;
-    showMessage(msgDiv, "✅ Name erfolgreich geändert!", "success");
-    
-    // Clear fields
-    document.getElementById('newName').value = '';
-    document.getElementById('oldPassForName').value = '';
-    updateLeaderboard();
+  if (newName.length < 3) {
+    showMessage(msgDiv, "❌ Neuer Name muss mindestens 3 Zeichen haben.", "error");
+    return;
   }
 
-  function changePassword() {
-    const oldPass = document.getElementById('oldPassForPass').value.trim();
-    const newPass = document.getElementById('newPass').value.trim();
-    const msgDiv = document.getElementById('settingsMsg');
-    
-    clearMessage(msgDiv);
-
-    if (newPass.length < 3) {
-      showMessage(msgDiv, "❌ Neues Passwort muss mindestens 3 Zeichen haben.", "error");
-      return;
-    }
-    
-    if (gameState.users[gameState.currentUser].pass !== oldPass) {
-      showMessage(msgDiv, "❌ Altes Passwort ist falsch.", "error");
-      return;
-    }
-
-    gameState.users[gameState.currentUser].pass = newPass;
-    saveGameData();
-    showMessage(msgDiv, "✅ Passwort erfolgreich geändert!", "success");
-    
-    // Clear fields
-    document.getElementById('oldPassForPass').value = '';
-    document.getElementById('newPass').value = '';
+  if (gameState.users[gameState.currentUser].pass !== oldPass) {
+    showMessage(msgDiv, "❌ Falsches altes Passwort!", "error");
+    return;
   }
 
-  // Leaderboard
-  function updateLeaderboard() {
-    const list = document.getElementById('leaderboardList');
-    const sortedUsers = Object.entries(gameState.users)
-      .sort((a, b) => b[1].score - a[1].score)
-      .slice(0, 10);
-    
-    if (sortedUsers.length === 0) {
-      list.innerHTML = '<li style="text-align: center; color: var(--text-medium);">Noch keine Spieler...</li>';
-      return;
-    }
-    
-    list.innerHTML = '';
-    sortedUsers.forEach(([name, data], index) => {
-      const li = document.createElement('li');
-      li.innerHTML = `
-        <span style="flex-grow: 1;">${name}</span>
-        <span style="color: var(--accent-gold); font-weight: bold;">${data.score}</span>
-      `;
-      if (name === gameState.currentUser) {
-        li.style.background = 'rgba(0, 255, 136, 0.2)';
-        li.style.borderLeft = '3px solid var(--primary-green)';
-      }
-      list.appendChild(li);
-    });
+  if (gameState.users[newName]) {
+    showMessage(msgDiv, "❌ Dieser Name ist bereits vergeben!", "error");
+    return;
   }
 
-  // Display Updates
-  function updateDisplay() {
-    document.getElementById('scoreDisplay').textContent = `Punkte: ${gameState.score}`;
-    updateSpeedDisplay();
+  // Move user data to new name
+  gameState.users[newName] = gameState.users[gameState.currentUser];
+  delete gameState.users[gameState.currentUser];
+  gameState.currentUser = newName;
+  
+  saveGameData();
+  showMessage(msgDiv, "✅ Name erfolgreich geändert!", "success");
+  document.getElementById('userNameDisplay').textContent = newName;
+  
+  // Clear inputs
+  document.getElementById('newName').value = '';
+  document.getElementById('oldPassForName').value = '';
+  updateLeaderboard();
+}
+
+function changePassword() {
+  const oldPass = document.getElementById('oldPassForPass').value.trim();
+  const newPass = document.getElementById('newPass').value.trim();
+  const msgDiv = document.getElementById('settingsMsg');
+  
+  clearMessage(msgDiv);
+
+  if (newPass.length < 3) {
+    showMessage(msgDiv, "❌ Neues Passwort muss mindestens 3 Zeichen haben.", "error");
+    return;
   }
 
-  function updateSpeedDisplay() {
-    document.getElementById('speedDisplay').textContent = `Multiplikator: ${gameState.speed.toFixed(1)}x`;
+  if (gameState.users[gameState.currentUser].pass !== oldPass) {
+    showMessage(msgDiv, "❌ Falsches altes Passwort!", "error");
+    return;
   }
 
-  // Utility Functions
-  function showMessage(element, message, type) {
-    element.textContent = message;
-    element.className = `message ${type}`;
-    element.classList.remove('hidden');
+  gameState.users[gameState.currentUser].pass = newPass;
+  saveGameData();
+  showMessage(msgDiv, "✅ Passwort erfolgreich geändert!", "success");
+  
+  // Clear inputs
+  document.getElementById('oldPassForPass').value = '';
+  document.getElementById('newPass').value = '';
+}
+
+// Display Functions
+function updateDisplay() {
+  document.getElementById('scoreDisplay').textContent = `Punkte: ${gameState.score}`;
+  updateSpeedDisplay();
+}
+
+function updateSpeedDisplay() {
+  document.getElementById('speedDisplay').textContent = `Multiplikator: ${gameState.speed.toFixed(1)}x (wird nicht gespeichert)`;
+}
+
+function updateLeaderboard() {
+  const leaderboardList = document.getElementById('leaderboardList');
+  
+  // Create sorted array of users by score
+  const sortedUsers = Object.entries(gameState.users)
+    .map(([name, data]) => ({ name, score: data.score || 0 }))
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 10);
+
+  if (sortedUsers.length === 0) {
+    leaderboardList.innerHTML = '<li style="text-align: center; color: var(--text-medium);">Noch keine Spieler</li>';
+    return;
   }
 
-  function clearMessage(element) {
-    element.classList.add('hidden');
-    element.textContent = '';
-  }
+  leaderboardList.innerHTML = sortedUsers
+    .map(user => `<li><span style="flex: 1;">${user.name}</span><span style="color: var(--accent-gold);">${user.score}</span></li>`)
+    .join('');
+}
 
-  // Simulated Features
-  function updateVisitorCounter() {
-    gameState.visitorCount++;
-    document.getElementById('visitorCount').textContent = gameState.visitorCount.toLocaleString();
-  }
+function updateVisitorCounter() {
+  gameState.visitorCount++;
+  document.getElementById('visitorCount').textContent = gameState.visitorCount;
+  saveGameData();
+}
 
-  function simulateOnlineCount() {
-    const onlineCount = Math.floor(Math.random() * 50) + 10;
-    document.getElementById('onlineCount').textContent = onlineCount;
-    
-    // Update every 30 seconds
-    setInterval(() => {
-      const newCount = Math.max(5, onlineCount + Math.floor(Math.random() * 10) - 5);
-      document.getElementById('onlineCount').textContent = newCount;
-    }, 30000);
-  }
+// Message Functions
+function showMessage(element, message, type) {
+  element.textContent = message;
+  element.className = `message ${type}`;
+  element.classList.remove('hidden');
+}
 
-  // Keyboard shortcuts
-  document.addEventListener('keydown', function(e) {
-    if (e.code === 'Space' && gameState.currentUser) {
-      e.preventDefault();
-      document.getElementById('cookieBtn').click();
-    }
-  });
+function clearMessage(element) {
+  element.classList.add('hidden');
+  element.textContent = '';
+}
 
-  // Auto-save every 10 seconds
-  setInterval(() => {
-    if (gameState.currentUser) {
-      saveGameData();
-    }
-  }, 10000);
-
-  // Initialize when page loads
-  init();
-</script>
-
-</body>
-</html>
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', init);

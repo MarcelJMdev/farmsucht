@@ -2,212 +2,177 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>FarmSucht Dino Game</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Farmsucht</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   <style>
     body {
-      margin: 0;
-      font-family: "Segoe UI", sans-serif;
-      background: linear-gradient(to bottom, #b3e5fc, #81d4fa);
-      color: #222;
-      overflow: hidden;
+      margin:0;
+      font-family:'Press Start 2P',monospace;
+      background:#227722;
+      color:#eee;
+      text-align:center;
+      overflow:hidden;
     }
-
+    header {
+      padding:20px;
+      font-size:2rem;
+      text-shadow:2px 2px 0 #000;
+      background:#115511;
+    }
     canvas {
-      display: block;
-      margin: auto;
-      background: url('https://i.imgur.com/JvRg8nP.png') repeat-x;
-      background-size: contain;
-      border: 4px solid #333;
-      border-radius: 16px;
+      margin:20px auto;
+      background:#99cc99;
+      display:block;
+      width:80vw;
+      max-width:800px;
+      height:200px;
+      border:4px solid #000;
     }
-
-    #info {
-      position: fixed;
-      top: 10px;
-      left: 10px;
-      font-size: 18px;
-      background: rgba(255, 255, 255, 0.8);
-      padding: 10px;
-      border-radius: 12px;
+    #controls {
+      margin:10px;
     }
-
-    #footer {
-      position: fixed;
-      bottom: 10px;
-      left: 10px;
-      font-size: 16px;
-      background: rgba(255,255,255,0.9);
-      padding: 10px;
-      border-radius: 10px;
+    .btn {
+      background:#335533;
+      color:#eee;
+      padding:8px 16px;
+      margin:5px;
+      border:none;
+      cursor:pointer;
+      font-family:'Press Start 2P',monospace;
+      text-shadow:1px 1px 0 #000;
     }
-
-    #visitor {
-      position: fixed;
-      bottom: 10px;
-      right: 10px;
+    #info,#footer,#rankings,#visitor {
+      background:rgba(0,0,0,0.5);
+      padding:8px;
+      margin:5px;
+      border-radius:8px;
+      display:inline-block;
     }
-
-    .rankings {
-      position: fixed;
-      top: 10px;
-      right: 10px;
-      background: rgba(255,255,255,0.8);
-      padding: 10px;
-      border-radius: 12px;
-      font-size: 14px;
-      max-width: 200px;
+    #info,#rankings {
+      position:fixed; top:10px;
     }
+    #info {left:10px;}
+    #rankings {right:10px;}
+    #footer,#visitor {position:fixed; bottom:10px;}
+    #footer{left:10px;}
+    #visitor{right:10px;}
   </style>
 </head>
 <body>
 
+<header>FARMSUCHT</header>
+
+<canvas id="game"></canvas>
+
+<div id="controls">
+  <button class="btn" id="pauseBtn">Pause</button>
+</div>
+
 <div id="info">
-  <strong>Mit Leertaste springen</strong><br>
   Punkte: <span id="score">0</span><br>
   Speed: <span id="speed">1</span>x
 </div>
 
-<div class="rankings">
-  <strong>Rangliste</strong>
-  <ol id="highscores">
-    <!-- Dynamisch gefüllt -->
-  </ol>
+<div id="rankings">
+  <b>Top Scores</b><br>
+  <ol id="highscores"></ol>
 </div>
 
-<canvas id="game" width="800" height="300"></canvas>
-
 <div id="footer">
-  Discord: <a href="https://dsc.gg/farmsucht" target="_blank">dsc.gg/farmsucht</a><br>
+  Discord: <a href="https://dsc.gg/farmsucht" style="color:#eee;">zaa_ay</a><br>
   YouTube: zaa_ay<br>
   Server-IP: farmsucht.eu<br>
-  Version: Minecraft 1.21.4 Citybuild
+  Minecraft 1.21.4 Citybuild
 </div>
 
 <div id="visitor">
-  <script type='text/javascript' src='https://www.freevisitorcounters.com/auth.php?id=ed0269d4f07f8324e1f49abeed46ba120c3c7da7'></script>
-  <script type="text/javascript" src="https://www.freevisitorcounters.com/en/home/counter/1349906/t/1"></script>
+  <script src="https://www.freevisitorcounters.com/auth.php?id=ed0269d4f07f8324e1f49abeed46ba120c3c7da120c3c7da7"></script>
+  <script src="https://www.freevisitorcounters.com/en/home/counter/1349906/t/1"></script>
 </div>
 
 <script>
-  const canvas = document.getElementById("game");
-  const ctx = canvas.getContext("2d");
+// Assets encoded in data-URI
+const steveImg = new Image();
+steveImg.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAAAwCAYAAADE0/F6AAA..."; // truncated
+const cactusImg = new Image();
+cactusImg.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAyCAYAAADpr1XrAAA..."; // truncated
 
-  let player = { x: 50, y: 220, width: 40, height: 40, dy: 0, jumping: false };
-  let obstacles = [];
-  let gravity = 1.5;
-  let score = 0;
-  let speed = 4;
-  let gameSpeed = 1;
-  let highScores = [];
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+canvas.width = Math.min(window.innerWidth*0.8,800);
+canvas.height = 200;
 
-  const playerImg = new Image();
-  playerImg.src = "https://i.imgur.com/MZxiwWx.png"; // Minecraft Steve
-  const blockImg = new Image();
-  blockImg.src = "https://i.imgur.com/WyICJBG.png"; // Minecraft Block
+let player = {x:50,y:150,width:40,height:40,dy:0,jumping:false};
+let obstacles = [];
+let gravity=1.2, score=0, speed=3;
+let highScores=[], paused=false;
 
-  function drawPlayer() {
-    ctx.drawImage(playerImg, player.x, player.y, player.width, player.height);
+function draw() {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.drawImage(steveImg,player.x,player.y,player.width,player.height);
+  obstacles.forEach(o=>ctx.drawImage(cactusImg,o.x,o.y,o.width,o.height));
+}
+
+function update() {
+  if (paused) return;
+  // Player
+  player.y+=player.dy; player.dy+=gravity;
+  if (player.y>=150) { player.y=150; player.jumping=false;}
+
+  // Obstacles
+  if (Math.random()<0.015) obstacles.push({x:canvas.width,y:150,width:40,height:40});
+  obstacles.forEach(o=>o.x-=speed);
+  obstacles=obstacles.filter(o=>o.x+o.width>0);
+
+  // Collision
+  let hit=obstacles.some(o=>
+     player.x<o.x+o.width && player.x+player.width>o.x &&
+     player.y<o.y+o.height && player.y+player.height>o.y
+  );
+  if (hit) gameOver();
+
+  // Score
+  score++;
+  if(score%200===0) speed++;
+  document.getElementById("score").innerText=score;
+  document.getElementById("speed").innerText=speed;
+}
+
+function gameOver(){
+  paused=true;
+  highScores.push(score);
+  highScores.sort((a,b)=>b-a); highScores=highScores.slice(0,5);
+  updateRankings();
+  setTimeout(()=>alert("Game Over! Punkte: "+score),10);
+}
+
+function updateRankings(){
+  const list=document.getElementById("highscores");
+  list.innerHTML="";
+  highScores.forEach(s=>{ let li=document.createElement("li"); li.innerText=s; list.appendChild(li);});
+}
+
+function loop(){
+  update(); draw();
+  requestAnimationFrame(loop);
+}
+
+loop();
+
+window.addEventListener("keydown",e=>{
+  if(e.code==="Space"){
+    if (!paused) jump();
   }
+});
+document.getElementById("pauseBtn").onclick = ()=>{paused=!paused; document.getElementById("pauseBtn").innerText=paused?"Weiter":"Pause";};
+document.getElementById("game").addEventListener("click", ()=>{
+  if (!paused) jump();
+});
 
-  function drawObstacles() {
-    ctx.fillStyle = "#8d6e63";
-    obstacles.forEach(ob => {
-      ctx.drawImage(blockImg, ob.x, ob.y, ob.width, ob.height);
-    });
-  }
-
-  function updateObstacles() {
-    if (Math.random() < 0.02) {
-      obstacles.push({ x: canvas.width, y: 220, width: 40, height: 40 });
-    }
-    obstacles.forEach(ob => ob.x -= speed);
-    obstacles = obstacles.filter(ob => ob.x + ob.width > 0);
-  }
-
-  function jump() {
-    if (!player.jumping) {
-      player.dy = -18;
-      player.jumping = true;
-    }
-  }
-
-  function updatePlayer() {
-    player.y += player.dy;
-    player.dy += gravity;
-    if (player.y >= 220) {
-      player.y = 220;
-      player.jumping = false;
-    }
-  }
-
-  function detectCollision() {
-    return obstacles.some(ob =>
-      player.x < ob.x + ob.width &&
-      player.x + player.width > ob.x &&
-      player.y < ob.y + ob.height &&
-      player.y + player.height > ob.y
-    );
-  }
-
-  function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drawPlayer();
-    drawObstacles();
-  }
-
-  function update() {
-    updatePlayer();
-    updateObstacles();
-    if (detectCollision()) {
-      gameOver();
-      return;
-    }
-    score++;
-    if (score % 100 === 0) speed++; // Speed erhöhen
-    document.getElementById("score").textContent = score;
-    document.getElementById("speed").textContent = speed;
-  }
-
-  function gameOver() {
-    highScores.push(score);
-    highScores.sort((a, b) => b - a);
-    highScores = highScores.slice(0, 5);
-    updateRankings();
-    alert("Game Over! Punktestand: " + score);
-    resetGame();
-  }
-
-  function resetGame() {
-    obstacles = [];
-    score = 0;
-    speed = 4;
-    player.y = 220;
-    player.dy = 0;
-    player.jumping = false;
-  }
-
-  function updateRankings() {
-    const list = document.getElementById("highscores");
-    list.innerHTML = "";
-    highScores.forEach((s, i) => {
-      const item = document.createElement("li");
-      item.textContent = s + " Punkte";
-      list.appendChild(item);
-    });
-  }
-
-  function loop() {
-    update();
-    draw();
-    requestAnimationFrame(loop);
-  }
-
-  document.addEventListener("keydown", (e) => {
-    if (e.code === "Space") jump();
-  });
-
-  loop();
+function jump(){
+  if(!player.jumping){player.dy=-18;player.jumping=true;}
+}
 </script>
 
 </body>

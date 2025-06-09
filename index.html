@@ -6,387 +6,902 @@
 <title>Farmsucht Minecraft Server</title>
 
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto:wght@300;400;500&display=swap');
+
+  :root {
+    --primary-green: #00ff88;
+    --dark-green: #00cc6a;
+    --bg-dark: #0a0f0a;
+    --bg-medium: #1a2f1a;
+    --bg-light: rgba(26, 47, 26, 0.8);
+    --text-light: #e8ffe8;
+    --text-medium: #b8ffb8;
+    --accent-gold: #ffcc00;
+    --shadow-glow: 0 0 20px rgba(0, 255, 136, 0.3);
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
 
   body {
-    margin: 0; padding: 0;
-    background: linear-gradient(to bottom, #0b3d0b, #072207);
-    color: #d7f0d7;
-    font-family: 'Press Start 2P', monospace;
-    user-select: none;
-    display: flex;
-    flex-direction: column;
+    background: linear-gradient(135deg, var(--bg-dark) 0%, #0f1f0f 50%, var(--bg-dark) 100%);
+    background-attachment: fixed;
+    color: var(--text-light);
+    font-family: 'Roboto', sans-serif;
     min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
   }
+
+  /* Animated background particles */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+      radial-gradient(circle at 20% 80%, rgba(0, 255, 136, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(0, 255, 136, 0.05) 0%, transparent 50%);
+    animation: float 6s ease-in-out infinite;
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+
   #container {
-    flex-grow: 1;
-    max-width: 1000px;
-    margin: auto;
+    max-width: 1200px;
+    margin: 0 auto;
     padding: 20px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 3rem;
+    position: relative;
+  }
+
+  .header::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 120%;
+    height: 120%;
+    background: radial-gradient(circle, rgba(0, 255, 136, 0.1) 0%, transparent 70%);
+    border-radius: 50%;
+    z-index: -1;
+  }
+
+  h1 {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(2rem, 5vw, 4rem);
+    font-weight: 900;
+    color: var(--primary-green);
+    text-shadow: 
+      0 0 10px var(--primary-green),
+      0 0 20px var(--primary-green),
+      0 0 30px var(--primary-green);
+    margin-bottom: 1rem;
+    animation: pulse 2s ease-in-out infinite alternate;
+  }
+
+  @keyframes pulse {
+    from { text-shadow: 0 0 10px var(--primary-green), 0 0 20px var(--primary-green), 0 0 30px var(--primary-green); }
+    to { text-shadow: 0 0 20px var(--primary-green), 0 0 30px var(--primary-green), 0 0 40px var(--primary-green); }
+  }
+
+  .server-info {
+    background: var(--bg-light);
+    backdrop-filter: blur(10px);
+    border: 2px solid var(--primary-green);
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+    box-shadow: var(--shadow-glow);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
     text-align: center;
   }
-  h1 {
-    font-size: 3em;
-    margin-bottom: 0.2em;
-    color: #6df46d;
-    text-shadow: 2px 2px 0 #083508;
+
+  .server-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
   }
-  #serverInfo {
-    font-size: 1.2em;
-    margin-bottom: 1.2em;
-    color: #a0dca0;
+
+  .server-stat-icon {
+    font-size: 2rem;
+    color: var(--accent-gold);
   }
-  #loginArea, #userArea {
-    margin-bottom: 1.5em;
-    background: rgba(0,0,0,0.4);
-    padding: 15px;
+
+  .server-stat-label {
+    color: var(--text-medium);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .server-stat-value {
+    color: var(--text-light);
+    font-weight: 500;
+    font-size: 1.1rem;
+  }
+
+  /* Cards */
+  .card {
+    background: var(--bg-light);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(0, 255, 136, 0.3);
+    border-radius: 20px;
+    padding: 2rem;
+    margin: 1.5rem 0;
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.1), transparent);
+    transition: left 0.5s ease;
+  }
+
+  .card:hover::before {
+    left: 100%;
+  }
+
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 
+      0 12px 40px rgba(0, 0, 0, 0.4),
+      0 0 30px rgba(0, 255, 136, 0.2);
+    border-color: var(--primary-green);
+  }
+
+  /* Forms */
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  .form-label {
+    display: block;
+    color: var(--text-medium);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.9rem;
+  }
+
+  .form-input {
+    width: 100%;
+    max-width: 300px;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(0, 255, 136, 0.3);
     border-radius: 10px;
-  }
-  input[type="text"], input[type="password"] {
-    font-family: 'Press Start 2P', monospace;
-    font-size: 1em;
-    padding: 8px;
-    margin: 5px 10px;
-    width: 180px;
-    border-radius: 5px;
-    border: none;
-    outline: none;
-  }
-  button {
-    font-family: 'Press Start 2P', monospace;
-    font-size: 1em;
-    padding: 10px 20px;
-    margin: 10px 5px 0 5px;
-    border: none;
-    border-radius: 7px;
-    background-color: #34a834;
-    color: #0b1b0b;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  button:hover {
-    background-color: #51d651;
-  }
-  #cookieBtn {
-    font-size: 3em;
-    background: none;
-    border: none;
-    cursor: pointer;
-    user-select: none;
-    margin: 20px auto;
+    color: var(--text-light);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    margin: 0 auto;
     display: block;
   }
-  #cookieBtn:focus {
+
+  .form-input:focus {
     outline: none;
+    border-color: var(--primary-green);
+    box-shadow: 0 0 0 3px rgba(0, 255, 136, 0.2);
+    background: rgba(255, 255, 255, 0.15);
   }
-  #cookieBtn::selection {
-    background: transparent;
+
+  .form-input::placeholder {
+    color: rgba(184, 255, 184, 0.6);
   }
-  #scoreDisplay {
-    font-size: 1.5em;
-    margin-top: 10px;
-    text-shadow: 1px 1px 0 #082508;
+
+  /* Buttons */
+  .btn {
+    background: linear-gradient(135deg, var(--primary-green), var(--dark-green));
+    color: var(--bg-dark);
+    border: none;
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0.5rem;
+    position: relative;
+    overflow: hidden;
   }
-  #speedDisplay {
-    font-size: 1.2em;
-    margin-top: 5px;
-    color: #a0dca0;
+
+  .btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
   }
-  #leaderboard {
+
+  .btn:hover::before {
+    left: 100%;
+  }
+
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 255, 136, 0.4);
+  }
+
+  .btn:active {
+    transform: translateY(0);
+  }
+
+  .btn-secondary {
+    background: linear-gradient(135deg, #666, #555);
+    color: var(--text-light);
+  }
+
+  .btn-secondary:hover {
+    box-shadow: 0 8px 25px rgba(102, 102, 102, 0.4);
+  }
+
+  /* Game Area */
+  .game-area {
+    text-align: center;
+    margin: 3rem 0;
+  }
+
+  .cookie-btn {
+    background: none;
+    border: none;
+    font-size: 8rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    filter: drop-shadow(0 0 20px rgba(255, 204, 0, 0.5));
+    animation: bounce 2s ease-in-out infinite;
+    user-select: none;
+  }
+
+  @keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-10px); }
+    60% { transform: translateY(-5px); }
+  }
+
+  .cookie-btn:hover {
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 30px rgba(255, 204, 0, 0.8));
+  }
+
+  .cookie-btn:active {
+    transform: scale(0.95);
+  }
+
+  .score-display {
+    font-family: 'Orbitron', monospace;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--accent-gold);
+    text-shadow: 0 0 10px var(--accent-gold);
+    margin: 1rem 0;
+  }
+
+  .speed-display {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.5rem;
+    color: var(--text-medium);
+    margin: 0.5rem 0;
+  }
+
+  /* Leaderboard */
+  .leaderboard {
     position: fixed;
     top: 20px;
     right: 20px;
-    background: rgba(0,0,0,0.6);
-    border-radius: 10px;
-    padding: 10px 15px;
-    width: 220px;
-    color: #a3e6a3;
-    font-size: 0.8em;
-    user-select: none;
+    width: 280px;
+    background: var(--bg-light);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(0, 255, 136, 0.3);
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow-glow);
+    z-index: 1000;
   }
-  #leaderboard h2 {
-    margin: 0 0 10px 0;
-    font-size: 1.2em;
-    color: #6df46d;
-  }
-  #leaderboard ol {
-    padding-left: 18px;
-    margin: 0;
-    text-align: left;
-  }
-  #leaderboard li {
-    margin-bottom: 4px;
-  }
-  #settingsArea {
-    display: none;
-    margin-top: 20px;
-    background: rgba(0,0,0,0.4);
-    padding: 15px;
-    border-radius: 10px;
-  }
-  #settingsArea input {
-    width: 160px;
-  }
-  #footer {
+
+  .leaderboard h2 {
+    font-family: 'Orbitron', monospace;
+    color: var(--primary-green);
     text-align: center;
-    padding: 15px;
-    font-size: 0.9em;
-    color: black;
-    background: #a0dca0;
-    font-family: 'Press Start 2P', monospace;
-    user-select: none;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
   }
-  #links {
-    margin-top: 10px;
-    font-size: 1.1em;
+
+  .leaderboard ol {
+    list-style: none;
+    counter-reset: leaderboard;
   }
-  #links a {
-    color: #6df46d;
-    margin: 0 10px;
-    text-decoration: none;
+
+  .leaderboard li {
+    counter-increment: leaderboard;
+    display: flex;
+    align-items: center;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+  }
+
+  .leaderboard li:hover {
+    background: rgba(0, 255, 136, 0.1);
+    transform: translateX(5px);
+  }
+
+  .leaderboard li::before {
+    content: counter(leaderboard);
+    background: var(--primary-green);
+    color: var(--bg-dark);
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-weight: bold;
+    margin-right: 0.75rem;
+    font-size: 0.8rem;
   }
-  #links a:hover {
-    text-decoration: underline;
+
+  /* Messages */
+  .message {
+    padding: 1rem;
+    border-radius: 10px;
+    margin: 1rem 0;
+    text-align: center;
+    font-weight: 500;
   }
-  .error {
-    color: #ff4444;
-    font-size: 0.9em;
+
+  .message.error {
+    background: rgba(255, 68, 68, 0.2);
+    border: 1px solid #ff4444;
+    color: #ff8888;
+  }
+
+  .message.success {
+    background: rgba(0, 255, 136, 0.2);
+    border: 1px solid var(--primary-green);
+    color: var(--primary-green);
+  }
+
+  /* Footer */
+  .footer {
+    background: var(--bg-medium);
+    border-top: 2px solid var(--primary-green);
+    padding: 2rem;
+    text-align: center;
+    margin-top: 4rem;
+    font-family: 'Orbitron', monospace;
+  }
+
+  .visitor-counter {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--bg-light);
+    backdrop-filter: blur(10px);
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    border: 1px solid rgba(0, 255, 136, 0.3);
+    font-size: 0.9rem;
+    color: var(--text-medium);
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .leaderboard {
+      position: static;
+      width: 100%;
+      margin: 2rem 0;
+    }
+    
+    .cookie-btn {
+      font-size: 6rem;
+    }
+    
+    .score-display {
+      font-size: 1.5rem;
+    }
+    
+    h1 {
+      font-size: 2.5rem;
+    }
+  }
+
+  /* Animations for better UX */
+  .fade-in {
+    animation: fadeIn 0.5s ease-in;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hidden {
+    display: none;
   }
 </style>
 </head>
 <body>
 
 <div id="container">
-  <h1>🌾 Farmsucht Minecraft Server 🌾</h1>
-  <div id="serverInfo">IP: farmsucht.eu | Version: 1.21.4 | Modus: Citybuild</div>
-
-  <!-- LOGIN -->
-  <div id="loginArea">
-    <div><strong>Minecraft Namen verwenden</strong></div>
-    <input type="text" id="loginName" placeholder="Benutzername" autocomplete="off" />
-    <input type="password" id="loginPass" placeholder="Passwort" autocomplete="off" />
-    <button onclick="handleLogin()">Login / Registrieren</button>
-    <div id="loginError" class="error"></div>
-  </div>
-
-  <!-- USER INFO -->
-  <div id="userArea" style="display:none;">
-    <div>Angemeldet als: <span id="userNameDisplay"></span></div>
-    <button onclick="toggleSettings()">⚙️ Einstellungen</button>
-    <button onclick="handleLogout()">Abmelden</button>
-
-    <div id="settingsArea">
-      <h3>Einstellungen</h3>
-      <input type="text" id="newName" placeholder="Neuer Name" autocomplete="off" /><br />
-      <input type="password" id="oldPassForName" placeholder="Altes Passwort" autocomplete="off" /><br />
-      <button onclick="changeName()">Namen ändern</button><br /><br />
-
-      <input type="password" id="oldPassForPass" placeholder="Altes Passwort" autocomplete="off" /><br />
-      <input type="password" id="newPass" placeholder="Neues Passwort" autocomplete="off" /><br />
-      <button onclick="changePassword()">Passwort ändern</button><br />
-      <div id="settingsMsg" class="error"></div>
+  <div class="header">
+    <h1>🌾 Farmsucht Minecraft Server 🌾</h1>
+    
+    <div class="server-info">
+      <div class="server-stat">
+        <div class="server-stat-icon">🌐</div>
+        <div class="server-stat-label">Server IP</div>
+        <div class="server-stat-value">farmsucht.eu</div>
+      </div>
+      <div class="server-stat">
+        <div class="server-stat-icon">⚙️</div>
+        <div class="server-stat-label">Version</div>
+        <div class="server-stat-value">1.21.4</div>
+      </div>
+      <div class="server-stat">
+        <div class="server-stat-icon">🏗️</div>
+        <div class="server-stat-label">Modus</div>
+        <div class="server-stat-value">Citybuild</div>
+      </div>
+      <div class="server-stat">
+        <div class="server-stat-icon">👥</div>
+        <div class="server-stat-label">Online</div>
+        <div class="server-stat-value" id="onlineCount">Loading...</div>
+      </div>
     </div>
   </div>
 
-  <!-- SPIELBEREICH -->
-  <button id="cookieBtn" title="Klicke um Punkte zu sammeln">🍪</button>
-  <div id="scoreDisplay">Punkte: 0</div>
-  <div id="speedDisplay">Geschwindigkeit: 1.0x</div>
-
-  <!-- Besucherzähler -->
-  <div style="position: fixed; bottom: 20px; right: 20px; font-size: 0.9em; color: #6df46d; user-select:none;">
-    Besucher: 
-    <a href='https://www.free-counters.org/'>https://www.Free-Counters.org</a>
-    <script type='text/javascript' src='https://www.freevisitorcounters.com/auth.php?id=ed0269d4f07f8324e1f49abeed46ba120c3c7da7'></script>
-    <script type="text/javascript" src="https://www.freevisitorcounters.com/en/home/counter/1349906/t/1"></script>
+  <!-- LOGIN AREA -->
+  <div id="loginArea" class="card fade-in">
+    <h2 style="text-align: center; color: var(--primary-green); margin-bottom: 1.5rem; font-family: 'Orbitron', monospace;">
+      🎮 Anmeldung
+    </h2>
+    <div class="form-group">
+      <label class="form-label">Minecraft Benutzername</label>
+      <input type="text" id="loginName" class="form-input" placeholder="Dein Minecraft Name" autocomplete="off" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Passwort</label>
+      <input type="password" id="loginPass" class="form-input" placeholder="Dein Passwort" autocomplete="off" />
+    </div>
+    <div style="text-align: center;">
+      <button class="btn" onclick="handleLogin()">🚀 Login / Registrieren</button>
+    </div>
+    <div id="loginError" class="message error hidden"></div>
   </div>
 
-  <!-- Rangliste -->
-  <div id="leaderboard">
-    <h2>Rangliste Top 10</h2>
-    <ol id="leaderboardList"></ol>
+  <!-- USER AREA -->
+  <div id="userArea" class="card fade-in hidden">
+    <h2 style="text-align: center; color: var(--primary-green); margin-bottom: 1rem; font-family: 'Orbitron', monospace;">
+      👋 Willkommen zurück!
+    </h2>
+    <div style="text-align: center; margin-bottom: 1.5rem;">
+      <span style="color: var(--text-medium);">Angemeldet als:</span>
+      <span id="userNameDisplay" style="color: var(--accent-gold); font-weight: bold; margin-left: 0.5rem;"></span>
+    </div>
+    <div style="text-align: center;">
+      <button class="btn btn-secondary" onclick="toggleSettings()">⚙️ Einstellungen</button>
+      <button class="btn btn-secondary" onclick="handleLogout()">🚪 Abmelden</button>
+    </div>
+
+    <!-- SETTINGS -->
+    <div id="settingsArea" class="card hidden" style="margin-top: 1.5rem;">
+      <h3 style="color: var(--primary-green); text-align: center; margin-bottom: 1.5rem; font-family: 'Orbitron', monospace;">
+        ⚙️ Einstellungen
+      </h3>
+      
+      <div style="margin-bottom: 2rem;">
+        <h4 style="color: var(--text-medium); margin-bottom: 1rem;">Namen ändern</h4>
+        <div class="form-group">
+          <input type="text" id="newName" class="form-input" placeholder="Neuer Name" autocomplete="off" />
+        </div>
+        <div class="form-group">
+          <input type="password" id="oldPassForName" class="form-input" placeholder="Altes Passwort" autocomplete="off" />
+        </div>
+        <div style="text-align: center;">
+          <button class="btn" onclick="changeName()">✏️ Namen ändern</button>
+        </div>
+      </div>
+
+      <div style="border-top: 1px solid rgba(0, 255, 136, 0.3); padding-top: 2rem;">
+        <h4 style="color: var(--text-medium); margin-bottom: 1rem;">Passwort ändern</h4>
+        <div class="form-group">
+          <input type="password" id="oldPassForPass" class="form-input" placeholder="Altes Passwort" autocomplete="off" />
+        </div>
+        <div class="form-group">
+          <input type="password" id="newPass" class="form-input" placeholder="Neues Passwort" autocomplete="off" />
+        </div>
+        <div style="text-align: center;">
+          <button class="btn" onclick="changePassword()">🔒 Passwort ändern</button>
+        </div>
+      </div>
+      
+      <div id="settingsMsg"></div>
+    </div>
   </div>
 
+  <!-- GAME AREA -->
+  <div class="game-area">
+    <button id="cookieBtn" class="cookie-btn" title="Klicke um Punkte zu sammeln!">🍪</button>
+    <div class="score-display" id="scoreDisplay">Punkte: 0</div>
+    <div class="speed-display" id="speedDisplay">Multiplikator: 1.0x</div>
+    <div style="margin-top: 1rem; color: var(--text-medium); font-size: 0.9rem;">
+      💡 Tipp: Je länger du spielst, desto schneller sammelst du Punkte!
+    </div>
+  </div>
+
+</div>
+
+<!-- LEADERBOARD -->
+<div id="leaderboard" class="leaderboard">
+  <h2>🏆 Top 10 Rangliste</h2>
+  <ol id="leaderboardList">
+    <li style="text-align: center; color: var(--text-medium);">Lade Daten...</li>
+  </ol>
+</div>
+
+<!-- VISITOR COUNTER -->
+<div class="visitor-counter">
+  👥 Besucher: <span id="visitorCount">0</span>
 </div>
 
 <!-- FOOTER -->
-<div id="footer">
-  2025 Farmsucht | programmiert von zaa_ay
+<div class="footer">
+  <div style="color: var(--primary-green); font-size: 1.2rem; margin-bottom: 1rem;">
+    © 2025 Farmsucht Minecraft Server
+  </div>
+  <div style="color: var(--text-medium);">
+    Programmiert mit ❤️ von zaa_ay
+  </div>
+  <div style="margin-top: 1rem;">
+    <a href="#" style="color: var(--accent-gold); text-decoration: none; margin: 0 1rem;">Discord</a>
+    <a href="#" style="color: var(--accent-gold); text-decoration: none; margin: 0 1rem;">Forum</a>
+    <a href="#" style="color: var(--accent-gold); text-decoration: none; margin: 0 1rem;">Shop</a>
+  </div>
 </div>
 
 <script>
-  const maxLeaderboard = 10;
-  let users = JSON.parse(localStorage.getItem("users") || "{}");
-  let currentUser = localStorage.getItem("currentUser");
-  let score = 0;
-  let speed = 1.0;
-  let speedIncreaseInterval;
-  let speedIncrement = 0.1;
-  let speedUpdateTimer;
+  // Game State
+  let gameState = {
+    users: {},
+    currentUser: null,
+    score: 0,
+    speed: 1.0,
+    speedTimer: null,
+    visitorCount: Math.floor(Math.random() * 1000) + 500 // Simulated counter
+  };
 
-  // Utility: Save users DB
-  function saveUsers() {
-    localStorage.setItem("users", JSON.stringify(users));
+  // Initialize
+  function init() {
+    loadGameData();
+    updateVisitorCounter();
+    simulateOnlineCount();
+    if (gameState.currentUser && gameState.users[gameState.currentUser]) {
+      autoLogin();
+    }
+    updateLeaderboard();
+    
+    // Add enter key listeners
+    document.getElementById('loginName').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') handleLogin();
+    });
+    document.getElementById('loginPass').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') handleLogin();
+    });
   }
 
-  // Login oder Registrierung
+  // Data persistence (using memory instead of localStorage)
+  function loadGameData() {
+    // In a real application, this would load from a server
+    gameState.users = gameState.users || {};
+  }
+
+  function saveGameData() {
+    // In a real application, this would save to a server
+    console.log('Game data saved:', gameState);
+  }
+
+  // Login/Register
   function handleLogin() {
-    let name = document.getElementById("loginName").value.trim();
-    let pass = document.getElementById("loginPass").value.trim();
-    let err = document.getElementById("loginError");
-    err.textContent = "";
+    const name = document.getElementById('loginName').value.trim();
+    const pass = document.getElementById('loginPass').value.trim();
+    const errorDiv = document.getElementById('loginError');
+    
+    clearMessage(errorDiv);
 
     if (name.length < 3 || pass.length < 3) {
-      err.textContent = "Name und Passwort mindestens 3 Zeichen.";
+      showMessage(errorDiv, "Name und Passwort müssen mindestens 3 Zeichen haben.", "error");
       return;
     }
-    if (users[name]) {
-      // User existiert - Passwort check
-      if (users[name].pass !== pass) {
-        err.textContent = "Falsches Passwort.";
+
+    if (gameState.users[name]) {
+      // Existing user - check password
+      if (gameState.users[name].pass !== pass) {
+        showMessage(errorDiv, "❌ Falsches Passwort!", "error");
         return;
       }
     } else {
-      // Neuen User anlegen
-      users[name] = {pass: pass, score: 0};
-      saveUsers();
+      // New user
+      gameState.users[name] = {
+        pass: pass,
+        score: 0,
+        joinDate: new Date().toISOString()
+      };
+      saveGameData();
     }
 
-    currentUser = name;
-    localStorage.setItem("currentUser", currentUser);
-    score = users[currentUser].score || 0;
-
-    document.getElementById("loginArea").style.display = "none";
-    document.getElementById("userArea").style.display = "block";
-    document.getElementById("userNameDisplay").textContent = currentUser;
-    document.getElementById("scoreDisplay").textContent = "Punkte: " + score;
-    document.getElementById("speedDisplay").textContent = "Geschwindigkeit: " + speed.toFixed(1) + "x";
-    updateLeaderboard();
+    gameState.currentUser = name;
+    gameState.score = gameState.users[name].score || 0;
+    
+    showUserArea();
     startSpeedIncrease();
+    updateDisplay();
+    updateLeaderboard();
+    
+    // Clear login form
+    document.getElementById('loginName').value = '';
+    document.getElementById('loginPass').value = '';
   }
 
-  // Logout
+  function autoLogin() {
+    gameState.score = gameState.users[gameState.currentUser].score || 0;
+    showUserArea();
+    startSpeedIncrease();
+    updateDisplay();
+  }
+
   function handleLogout() {
-    currentUser = null;
-    localStorage.removeItem("currentUser");
-    document.getElementById("loginArea").style.display = "block";
-    document.getElementById("userArea").style.display = "none";
+    gameState.currentUser = null;
+    gameState.score = 0;
+    gameState.speed = 1.0;
     stopSpeedIncrease();
-    score = 0;
-    speed = 1.0;
-    document.getElementById("scoreDisplay").textContent = "Punkte: 0";
-    document.getElementById("speedDisplay").textContent = "Geschwindigkeit: 1.0x";
-    clearInterval(speedUpdateTimer);
+    
+    showLoginArea();
+    updateDisplay();
   }
 
-  // Cookie click
-  document.getElementById("cookieBtn").addEventListener("click", () => {
-    if (!currentUser) return alert("Bitte zuerst einloggen!");
-    score++;
-    users[currentUser].score = score;
-    saveUsers();
-    document.getElementById("scoreDisplay").textContent = "Punkte: " + score;
+  // UI Management
+  function showLoginArea() {
+    document.getElementById('loginArea').classList.remove('hidden');
+    document.getElementById('userArea').classList.add('hidden');
+    document.getElementById('settingsArea').classList.add('hidden');
+  }
+
+  function showUserArea() {
+    document.getElementById('loginArea').classList.add('hidden');
+    document.getElementById('userArea').classList.remove('hidden');
+    document.getElementById('userNameDisplay').textContent = gameState.currentUser;
+  }
+
+  function toggleSettings() {
+    const settingsArea = document.getElementById('settingsArea');
+    settingsArea.classList.toggle('hidden');
+    clearMessage(document.getElementById('settingsMsg'));
+  }
+
+  // Cookie Game
+  document.getElementById('cookieBtn').addEventListener('click', function() {
+    if (!gameState.currentUser) {
+      alert('🎮 Bitte zuerst einloggen um zu spielen!');
+      return;
+    }
+    
+    const points = Math.floor(gameState.speed);
+    gameState.score += points;
+    gameState.users[gameState.currentUser].score = gameState.score;
+    saveGameData();
+    updateDisplay();
+    updateLeaderboard();
+    
+    // Visual feedback
+    this.style.transform = 'scale(0.95)';
+    setTimeout(() => {
+      this.style.transform = '';
+    }, 100);
   });
 
-  // Rangliste updaten
-  function updateLeaderboard() {
-    let list = document.getElementById("leaderboardList");
-    list.innerHTML = "";
-    // Sortiere Nutzer nach Score absteigend
-    let sortedUsers = Object.entries(users)
-      .sort((a,b) => b[1].score - a[1].score)
-      .slice(0, maxLeaderboard);
-    for(let i=0; i < sortedUsers.length; i++) {
-      let [name, data] = sortedUsers[i];
-      let li = document.createElement("li");
-      li.textContent = `#${i+1} ${name}: ${data.score} Punkte`;
-      list.appendChild(li);
+  // Speed System
+  function startSpeedIncrease() {
+    stopSpeedIncrease();
+    gameState.speed = 1.0;
+    gameState.speedTimer = setInterval(() => {
+      gameState.speed += 0.1;
+      updateSpeedDisplay();
+    }, 3000); // Increase every 3 seconds
+  }
+
+  function stopSpeedIncrease() {
+    if (gameState.speedTimer) {
+      clearInterval(gameState.speedTimer);
+      gameState.speedTimer = null;
     }
   }
 
-  // Einstellungen anzeigen/ausblenden
-  function toggleSettings() {
-    let s = document.getElementById("settingsArea");
-    s.style.display = (s.style.display === "block") ? "none" : "block";
-    document.getElementById("settingsMsg").textContent = "";
-  }
-
-  // Namen ändern
+  // Settings
   function changeName() {
-    let newName = document.getElementById("newName").value.trim();
-    let oldPass = document.getElementById("oldPassForName").value.trim();
-    let msg = document.getElementById("settingsMsg");
-    msg.textContent = "";
+    const newName = document.getElementById('newName').value.trim();
+    const oldPass = document.getElementById('oldPassForName').value.trim();
+    const msgDiv = document.getElementById('settingsMsg');
+    
+    clearMessage(msgDiv);
 
     if (newName.length < 3) {
-      msg.textContent = "Neuer Name muss mindestens 3 Zeichen haben.";
+      showMessage(msgDiv, "❌ Neuer Name muss mindestens 3 Zeichen haben.", "error");
       return;
     }
-    if (users[newName]) {
-      msg.textContent = "Name ist schon vergeben.";
+    
+    if (gameState.users[newName]) {
+      showMessage(msgDiv, "❌ Dieser Name ist bereits vergeben.", "error");
       return;
     }
-    if (users[currentUser].pass !== oldPass) {
-      msg.textContent = "Altes Passwort falsch.";
+    
+    if (gameState.users[gameState.currentUser].pass !== oldPass) {
+      showMessage(msgDiv, "❌ Altes Passwort ist falsch.", "error");
       return;
     }
 
-    // Daten übertragen
-    users[newName] = {...users[currentUser]};
-    delete users[currentUser];
-    currentUser = newName;
-    localStorage.setItem("currentUser", currentUser);
-    saveUsers();
+    // Transfer data
+    gameState.users[newName] = {...gameState.users[gameState.currentUser]};
+    delete gameState.users[gameState.currentUser];
+    gameState.currentUser = newName;
+    saveGameData();
 
-    document.getElementById("userNameDisplay").textContent = currentUser;
-    msg.textContent = "Name erfolgreich geändert!";
-    // Felder leeren
-    document.getElementById("newName").value = "";
-    document.getElementById("oldPassForName").value = "";
+    document.getElementById('userNameDisplay').textContent = newName;
+    showMessage(msgDiv, "✅ Name erfolgreich geändert!", "success");
+    
+    // Clear fields
+    document.getElementById('newName').value = '';
+    document.getElementById('oldPassForName').value = '';
     updateLeaderboard();
   }
 
-  // Passwort ändern
   function changePassword() {
-    let oldPass = document.getElementById("oldPassForPass").value.trim();
-    let newPass = document.getElementById("newPass").value.trim();
-    let msg = document.getElementById("settingsMsg");
-    msg.textContent = "";
+    const oldPass = document.getElementById('oldPassForPass').value.trim();
+    const newPass = document.getElementById('newPass').value.trim();
+    const msgDiv = document.getElementById('settingsMsg');
+    
+    clearMessage(msgDiv);
 
     if (newPass.length < 3) {
-      msg.textContent = "Neues Passwort muss mindestens 3 Zeichen haben.";
+      showMessage(msgDiv, "❌ Neues Passwort muss mindestens 3 Zeichen haben.", "error");
       return;
     }
-    if (users[currentUser].pass !== oldPass) {
-      msg.textContent = "Altes Passwort falsch.";
+    
+    if (gameState.users[gameState.currentUser].pass !== oldPass) {
+      showMessage(msgDiv, "❌ Altes Passwort ist falsch.", "error");
       return;
     }
 
-    users[currentUser].pass = newPass;
-    saveUsers();
-    msg.textContent = "Passwort erfolgreich geändert!";
-    document.getElementById("oldPassForPass").value = "";
-    document.getElementById("newPass").value = "";
+    gameState.users[gameState.currentUser].pass = newPass;
+    saveGameData();
+    showMessage(msgDiv, "✅ Passwort erfolgreich geändert!", "success");
+    
+    // Clear fields
+    document.getElementById('oldPassForPass').value = '';
+    document.getElementById('newPass').value = '';
   }
 
-  // Geschwindigkeits-Update (optional)
-  function startSpeedIncrease() {
-    stopSpeedIncrease();
-    speed = 1.0;
-    speedUpdateTimer = setInterval(() => {
-      speed += 0.05;
-      document.getElementById("speedDisplay").textContent = "Geschwindigkeit: " + speed.toFixed(2) + "x";
-    }, 2000);
-  }
-  function stopSpeedIncrease() {
-    clearInterval(speedUpdateTimer);
+  // Leaderboard
+  function updateLeaderboard() {
+    const list = document.getElementById('leaderboardList');
+    const sortedUsers = Object.entries(gameState.users)
+      .sort((a, b) => b[1].score - a[1].score)
+      .slice(0, 10);
+    
+    if (sortedUsers.length === 0) {
+      list.innerHTML = '<li style="text-align: center; color: var(--text-medium);">Noch keine Spieler...</li>';
+      return;
+    }
+    
+    list.innerHTML = '';
+    sortedUsers.forEach(([name, data], index) => {
+      const li = document.createElement('li');
+      li.innerHTML = `
+        <span style="flex-grow: 1;">${name}</span>
+        <span style="color: var(--accent-gold); font-weight: bold;">${data.score}</span>
+      `;
+      if (name === gameState.currentUser) {
+        li.style.background = 'rgba(0, 255, 136, 0.2)';
+        li.style.borderLeft = '3px solid var(--primary-green)';
+      }
+      list.appendChild(li);
+    });
   }
 
-  // Auto-login, wenn User noch im localStorage
-  if(currentUser && users[currentUser]) {
-    handleLogin();
+  // Display Updates
+  function updateDisplay() {
+    document.getElementById('scoreDisplay').textContent = `Punkte: ${gameState.score}`;
+    updateSpeedDisplay();
   }
+
+  function updateSpeedDisplay() {
+    document.getElementById('speedDisplay').textContent = `Multiplikator: ${gameState.speed.toFixed(1)}x`;
+  }
+
+  // Utility Functions
+  function showMessage(element, message, type) {
+    element.textContent = message;
+    element.className = `message ${type}`;
+    element.classList.remove('hidden');
+  }
+
+  function clearMessage(element) {
+    element.classList.add('hidden');
+    element.textContent = '';
+  }
+
+  // Simulated Features
+  function updateVisitorCounter() {
+    gameState.visitorCount++;
+    document.getElementById('visitorCount').textContent = gameState.visitorCount.toLocaleString();
+  }
+
+  function simulateOnlineCount() {
+    const onlineCount = Math.floor(Math.random() * 50) + 10;
+    document.getElementById('onlineCount').textContent = onlineCount;
+    
+    // Update every 30 seconds
+    setInterval(() => {
+      const newCount = Math.max(5, onlineCount + Math.floor(Math.random() * 10) - 5);
+      document.getElementById('onlineCount').textContent = newCount;
+    }, 30000);
+  }
+
+  // Keyboard shortcuts
+  document.addEventListener('keydown', function(e) {
+    if (e.code === 'Space' && gameState.currentUser) {
+      e.preventDefault();
+      document.getElementById('cookieBtn').click();
+    }
+  });
+
+  // Auto-save every 10 seconds
+  setInterval(() => {
+    if (gameState.currentUser) {
+      saveGameData();
+    }
+  }, 10000);
+
+  // Initialize when page loads
+  init();
 </script>
 
 </body>

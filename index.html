@@ -314,7 +314,7 @@
     width: 40,
     height: 50,
     dy: 0,
-    jumpPower: 15,
+    jumpPower: 22,
     grounded: false,
     color: '#8B4513'
   };
@@ -394,7 +394,7 @@
       // Player is on ground
     } else {
       // Apply gravity
-      player.dy += 0.8;
+      player.dy += 0.6;
       player.y += player.dy;
       
       // Check ground collision
@@ -408,7 +408,7 @@
     }
     
     // Spawn obstacles
-    if (Date.now() - lastObstacle > 1500 - (gameSpeed * 50)) {
+    if (Date.now() - lastObstacle > 2000 - (gameSpeed * 50)) {
       obstacles.push({
         x: canvas.width,
         y: 260,
